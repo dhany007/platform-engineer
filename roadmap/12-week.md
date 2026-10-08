@@ -35,7 +35,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 
 - **Learn:** Navigate a Linux filesystem, inspect files, and compose simple commands with pipes and redirection.
 - **Practice:** Create a workspace, inspect the Go project, and save command output to a log file.
-- **Read:** [Ubuntu command line for beginners](https://ubuntu.com/tutorials/command-line-for-beginners).
+- **Read:** [Ubuntu: The Linux command line for beginners](https://documentation.ubuntu.com/desktop/en/latest/tutorial/the-linux-command-line-for-beginners/).
 
 ### Day 2 — Users, permissions, and processes
 
