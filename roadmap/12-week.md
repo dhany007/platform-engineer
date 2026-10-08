@@ -34,32 +34,32 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 ### Day 1 — Shell, paths, and files
 
 - **Learn:** Navigate a Linux filesystem, inspect files, and compose simple commands with pipes and redirection.
-- **Practice:** Create a workspace, inspect the Go project, and save command output to a log file.
+- **Practice:** Create a workspace, inspect a sample configuration file, and save a sorted roadmap file list.
 - **Read:** [Ubuntu: The Linux command line for beginners](https://documentation.ubuntu.com/desktop/en/latest/tutorial/the-linux-command-line-for-beginners/).
 
 ### Day 2 — Users, permissions, and processes
 
 - **Learn:** How users, file permissions, process IDs, and signals affect a running service.
-- **Practice:** Start the API, find its process, inspect it, send a graceful signal, and restart it.
-- **Read:** [Ubuntu: Linux processes](https://ubuntu.com/server/docs/how-to/software/monitoring/processes/).
+- **Practice:** Inspect your identity and lab-file permissions; start a harmless `sleep` process, inspect its PID, send SIGTERM, restart it, and clean up. Graceful cleanup requires application signal handling.
+- **Read:** [Ubuntu: Welcome to the terminal](https://ubuntu.com/server/docs/tutorial/welcome-to-the-terminal/), [Linux signal manual](https://man7.org/linux/man-pages/man7/signal.7.html).
 
 ### Day 3 — Ports and TCP connections
 
 - **Learn:** How clients connect to a process through an IP address and port; distinguish connection failures from application errors.
-- **Practice:** Use `curl` and available socket tools to inspect the API's listener and test a closed port.
-- **Read:** [Cloudflare Learning Center: What is TCP/IP?](https://www.cloudflare.com/learning/network-layer/what-is-tcp-ip/).
+- **Practice:** Run a loopback Python `http.server` in Terminal A; inspect its listener with `lsof` and request it with `curl` in Terminal B. Compare HTTP 404 with a connection failure after stopping the server.
+- **Read:** [Cloudflare: What is TCP/IP?](https://www.cloudflare.com/learning/ddos/glossary/tcp-ip/), [curl manual](https://curl.se/docs/manpage.html).
 
 ### Day 4 — DNS, HTTP, and TLS
 
 - **Learn:** How DNS resolves a name, how HTTP requests and responses are structured, and what TLS protects.
-- **Practice:** Inspect DNS lookup results and use `curl -v` against a local and a public HTTPS endpoint.
-- **Read:** [Cloudflare: What is DNS?](https://www.cloudflare.com/learning/dns/what-is-dns/), [MDN: An overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview).
+- **Practice:** Inspect public A and AAAA DNS records with `dig`, examine GET and HEAD requests to a public HTTPS endpoint with `curl`, and explain the DNS, connection, TLS, and HTTP steps.
+- **Read:** [Cloudflare: What is DNS?](https://www.cloudflare.com/learning/dns/what-is-dns/), [MDN: Overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview), [Cloudflare: TLS](https://www.cloudflare.com/learning/ssl/transport-layer-security-tls/).
 
 ### Day 5 — Logs and first-response troubleshooting
 
 - **Learn:** A repeatable first-response sequence: check process, listener, recent logs, and dependencies.
-- **Practice:** Break the API's port or database address, diagnose the failure, and write down the commands that identified it.
-- **Read:** [The Twelve-Factor App: Logs](https://12factor.net/logs).
+- **Practice:** Capture a local Python HTTP server's logs, diagnose an intentionally incorrect client port with `curl`, `lsof`, `ps`, and `tail`, restore the request, and write an incident note.
+- **Read:** [The Twelve-Factor App: Logs](https://12factor.net/logs), [curl manual](https://curl.se/docs/manpage.html).
 
 **Milestone:** Explain the path from a DNS name to an HTTP handler and show how you would investigate a connection failure.
 
