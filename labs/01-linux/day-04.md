@@ -2,6 +2,8 @@
 
 **Time:** About 60–90 minutes.
 
+In the command blocks below, `$` is a prompt marker, not part of the command. Type the text after `$` and press Enter once per line.
+
 ## Progress
 
 - [ ] Exercise 1 — Inspect DNS records.
@@ -30,20 +32,47 @@ Read [Cloudflare: What is DNS?](https://www.cloudflare.com/learning/dns/what-is-
 - `A` asks for IPv4 addresses; `AAAA` asks for IPv6 addresses.
 - `+noall` hides the usual output sections; `+answer` re-enables the answer section. Each answer shows a name, TTL (cache lifetime in seconds), class, record type, and record value.
 
-```sh
-dig example.com A +noall +answer
-dig example.com AAAA +noall +answer
+```console
+$ dig example.com A +noall +answer
+$ dig example.com AAAA +noall +answer
 ```
 
 Record one address, its type, and TTL. Addresses and TTLs can change, so there is no fixed expected value. Multiple answers are normal. An empty answer is not by itself proof that all DNS is broken; inspect the full response next.
 
 Before the optional diagnostic command: plain `dig example.com A` includes status, question, answer, and resolver details. Look for `status` and the `SERVER` line. A timeout suggests your query received no usable reply.
 
-```sh
-dig example.com A
+```console
+$ dig example.com A
 ```
 
 If DNS or internet access is unavailable, record that observation and finish the written model; repeat the network observations when access returns.
+
+### Expected result
+
+These DNS addresses are documentation-only sample values, not claimed current records for example.com. Real addresses, TTLs, resolver addresses, IDs, timings, and record counts vary. The final command includes the optional full-response check; bracketed notes mark omitted sections. DNS answers establish name resolution, not service health.
+
+```console
+$ dig example.com A +noall +answer
+example.com. 300 IN A 192.0.2.10
+$ dig example.com AAAA +noall +answer
+example.com. 300 IN AAAA 2001:db8::10
+$ dig example.com A
+[dig version banner omitted]
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 42100
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+[other sections omitted]
+;; QUESTION SECTION:
+;example.com. IN A
+
+;; ANSWER SECTION:
+example.com. 300 IN A 192.0.2.10
+
+;; Query time: 12 msec
+;; SERVER: 192.0.2.53#53(192.0.2.53) (UDP)
+;; WHEN: Fri Oct 09 10:00:00 WIB 2026
+[message size omitted]
+```
 
 ## Exercise 2 — Read an HTTP exchange over HTTPS
 
@@ -53,14 +82,48 @@ If DNS or internet access is unavailable, record that observation and finish the
 - `--connect-timeout 5` limits connection establishment to five seconds; `--max-time 15` caps the entire transfer at fifteen seconds.
 - `-I` requests headers using the HTTP HEAD method, so the second request does not download the response body.
 
-```sh
-curl -v -i --connect-timeout 5 --max-time 15 https://example.com/
-curl -I --connect-timeout 5 --max-time 15 https://example.com/
+```console
+$ curl -v -i --connect-timeout 5 --max-time 15 https://example.com/
+$ curl -I --connect-timeout 5 --max-time 15 https://example.com/
 ```
 
 Find the requested method and path, response status, one response header, and the GET response body. Find TLS/certificate details in the verbose output if shown by your curl build. HTTP versions, TLS versions, and certificate details can vary. Curl verifies the certificate by default; record any verification error as an observation instead of disabling verification.
 
 If your network uses an HTTP proxy, verbose output may also show a proxy connection or CONNECT exchange. Identify that extra step in your notes. This lab does not require changing proxy settings.
+
+### Expected result
+
+This shows an illustrative direct HTTP/1.1 exchange. The documentation-only address, TLS details, headers, curl version, and diagnostics vary. Bracketed notes mark omitted output. `-v` prints response headers as diagnostics and `-i` also includes them with the body, so they can appear twice. The second command uses HEAD and returns no body. Proxies or HTTP/2 can change the displayed exchange.
+
+```console
+$ curl -v -i --connect-timeout 5 --max-time 15 https://example.com/
+[progress meter and some diagnostics omitted]
+* Host example.com:443 was resolved.
+*   Trying 192.0.2.10:443...
+* Connected to example.com (192.0.2.10) port 443
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* SSL certificate verify ok.
+> GET / HTTP/1.1
+> Host: example.com
+> User-Agent: curl/8.7.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: text/html
+< [other response headers omitted]
+<
+HTTP/1.1 200 OK
+Content-Type: text/html
+[other response headers omitted]
+
+<!doctype html>
+<html><head><title>Example Domain</title></head>
+[remaining HTML omitted]
+$ curl -I --connect-timeout 5 --max-time 15 https://example.com/
+HTTP/1.1 200 OK
+Content-Type: text/html
+[other response headers omitted]
+```
 
 ## Exercise 3 — Describe the request path from your observations
 
@@ -73,11 +136,27 @@ No terminal commands are needed. In a personal notes file, draw or write these s
 
 Compare this to Day 3's `http://127.0.0.1:8765/`: the numeric address needs no hostname lookup, the port is explicit, and that plaintext local server does not use TLS. You do not need to restart it for this exercise.
 
+### Expected result
+
+**Sample written response (no terminal commands):**
+
+“DNS returned an address for `example.com`. In the sample HTTPS exchange, curl connected to that address on port 443, validated the server certificate during TLS setup, and sent `GET /`. The server returned HTTP 200, headers, and an HTML body. DNS resolution alone would not prove that the server was healthy.
+
+“For Day 3's `http://127.0.0.1:8765/`, the numeric address needs no hostname lookup, the port is explicit, and plaintext HTTP does not use TLS. HTTP/3 or a configured proxy can introduce a different connection path.”
+
+Attach your own DNS and HTTP/TLS evidence when doing the exercise; this written example is illustrative.
+
 ## Check your understanding
 
 1. What do A, AAAA, and TTL tell you, and why is a DNS answer not a health check?
 2. What changed between curl's GET and HEAD requests?
 3. What does TLS protect, and what does it leave for the application to handle?
+
+### Answer key
+
+1. A records contain IPv4 addresses, AAAA records contain IPv6 addresses, and TTL limits caching time. DNS can return an address even when its service is unavailable.
+2. GET requests the resource and receives its body. HEAD requests the corresponding response headers without a response body; it does not change the resource.
+3. TLS protects data in transit against reading and alteration and authenticates the server through certificate validation. Application correctness, authorization, and protection of stored data still need application controls.
 
 **Share back:** Send DNS observations, HTTP/TLS observations, your request-path notes, and answers. Note any network-dependent exercise you need to repeat.
 

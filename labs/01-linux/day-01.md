@@ -51,6 +51,30 @@ pwd
 
 Check that the three `pwd` results show the project root, then `labs/01-linux`, then the project root again.
 
+### Expected result
+
+The configured checkout path is repeated exactly from the exercise. Listing metadata and entries vary; `learner` is a generic sample owner. The three `pwd` results show root, lab directory, then root again.
+
+```console
+$ cd /Users/citradigital/Desktop/learn/platform-engineer
+$ pwd
+/Users/citradigital/Desktop/learn/platform-engineer
+$ ls -la
+total 0
+drwxr-xr-x  8 learner staff 256 Oct  9 10:00 .
+drwxr-xr-x  3 learner staff  96 Oct  9 09:00 ..
+drwxr-xr-x 12 learner staff 384 Oct  9 09:00 .git
+drwxr-xr-x  4 learner staff 128 Oct  9 09:00 labs
+drwxr-xr-x  3 learner staff  96 Oct  9 09:00 roadmap
+[other entries omitted]
+$ cd labs/01-linux
+$ pwd
+/Users/citradigital/Desktop/learn/platform-engineer/labs/01-linux
+$ cd ../..
+$ pwd
+/Users/citradigital/Desktop/learn/platform-engineer
+```
+
 ## Exercise 2 — Create and inspect files
 
 Run these commands from the project root:
@@ -70,6 +94,23 @@ ls -la labs/01-linux/day-01/workspace
 
 Expected file contents: `service=go-api` on the first line and `port=8080` on the second.
 
+### Expected result
+
+The file contains 25 bytes of sample configuration; it does not start a service. Permission metadata and timestamps vary.
+
+```console
+$ mkdir -p labs/01-linux/day-01/workspace
+$ printf 'service=go-api\nport=8080\n' > labs/01-linux/day-01/workspace/sample.conf
+$ cat labs/01-linux/day-01/workspace/sample.conf
+service=go-api
+port=8080
+$ ls -la labs/01-linux/day-01/workspace
+total 8
+drwxr-xr-x 3 learner staff 96 Oct  9 10:00 .
+drwxr-xr-x 3 learner staff 96 Oct  9 10:00 ..
+-rw-r--r-- 1 learner staff 25 Oct  9 10:00 sample.conf
+```
+
 ## Exercise 3 — Pipe and save command output
 
 Run these commands from the project root:
@@ -88,6 +129,18 @@ wc -l < labs/01-linux/day-01/workspace/roadmap-files.txt
 
 This repository currently has one file under `roadmap`, so the expected count is `1`.
 
+### Expected result
+
+The first command is silent because output is saved to a file. The saved list contains filenames, and its line count is one in the current repository; adding roadmap files changes both.
+
+```console
+$ find roadmap -type f | sort > labs/01-linux/day-01/workspace/roadmap-files.txt
+$ cat labs/01-linux/day-01/workspace/roadmap-files.txt
+roadmap/12-week.md
+$ wc -l < labs/01-linux/day-01/workspace/roadmap-files.txt
+       1
+```
+
 ## Check your understanding
 
 Answer in your own words:
@@ -96,7 +149,13 @@ Answer in your own words:
 2. What is the difference between `|` and `>` in Exercise 3?
 3. What happens to `sample.conf` if you repeat the `printf ... > sample.conf` command?
 
-**Share back:** The command outputs for Exercises 1–3 have been reviewed. Send your three answers so we can finish Day 1 before moving to Day 2.
+### Answer key
+
+1. `labs/01-linux` is relative to the current directory. From another directory, that relative path may name a different location or not exist.
+2. `|` passes one command’s output to another command as input. `>` writes output to a file and overwrites its previous contents.
+3. The file is overwritten with the same two lines; they are not appended.
+
+**Review status:** The command outputs and answers for Exercises 1–3 have been reviewed. Day 1 is complete.
 
 ## Completion criteria
 
