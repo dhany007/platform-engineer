@@ -11,7 +11,7 @@ Commands start with a `$` prompt marker: type only the text after that leading m
 - [x] Exercise 3 — Pipe and save command output.
 - [x] Check your understanding — Answer the three questions below.
 - [x] Core Day 1 complete — Exercises 1–3 and their answers reviewed.
-- [ ] Extension 4 — Terminal controls, navigation, arguments, and quoting.
+- [x] Extension 4 — Terminal controls, navigation, arguments, and quoting.
 - [ ] Extension 5 — Text, wildcards, append, paging, and cancellation.
 - [ ] Extension 6 — Copy, move, and rename.
 - [ ] Extension 7 — Streams, counts, sorting, uniqueness, and manuals.
@@ -211,7 +211,7 @@ Paths use `/` as a separator. `/` names the filesystem root directory; **root th
 
 ## Extension 4 — Navigation, arguments, options, and quoting
 
-**Progress:** Leave Extension 4 unchecked until you practice and review it. This extension uses only `day-01/extensions/paths` for created directories.
+**Progress:** Extension 4 practiced and reviewed. This extension uses only `day-01/extensions/paths` for created directories.
 
 Before the commands:
 
