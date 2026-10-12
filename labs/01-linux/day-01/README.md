@@ -12,10 +12,10 @@ Commands start with a `$` prompt marker: type only the text after that leading m
 - [x] Check your understanding — Answer the three questions below.
 - [x] Core Day 1 complete — Exercises 1–3 and their answers reviewed.
 - [x] Extension 4 — Terminal controls, navigation, arguments, and quoting.
-- [ ] Extension 5 — Text, wildcards, append, paging, and cancellation.
-- [ ] Extension 6 — Copy, move, and rename.
-- [ ] Extension 7 — Streams, counts, sorting, uniqueness, and manuals.
-- [ ] Extension 8 — Hidden files and filename case.
+- [x] Extension 5 — Text, wildcards, append, paging, and cancellation.
+- [x] Extension 6 — Copy, move, and rename.
+- [x] Extension 7 — Streams, counts, sorting, uniqueness, and manuals.
+- [x] Extension 8 — Hidden files and filename case.
 - [ ] Extension 9 — Inspect and clean up extension files.
 - [ ] Extension 10 — Explain administrator access and Ubuntu software tools.
 - [ ] Extension checks — Answer and review the new questions.
