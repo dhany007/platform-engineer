@@ -1,6 +1,6 @@
 # Day 5 — Logs and First-Response Troubleshooting
 
-**Time:** About 60–90 minutes.
+**Time:** About 60–90 minutes for the core exercises. The extensions are additional self-paced sessions.
 
 In the command blocks below, `$` is a prompt marker, not part of the command. Type the text after `$` and press Enter once per line, using Terminal A or B as instructed.
 
@@ -10,7 +10,11 @@ In the command blocks below, `$` is a prompt marker, not part of the command. Ty
 - [ ] Exercise 2 — Diagnose an incorrect client port.
 - [ ] Exercise 3 — Restore the request and write an incident note.
 - [ ] Check your understanding — Answer the three questions below.
-- [ ] Day 5 complete — All exercises and answers reviewed.
+- [ ] Core Day 5 complete — Exercises 1–3 and answers reviewed.
+- [ ] Extension 4 — Compare HTTP status with curl exit status.
+- [ ] Extension 5 — Compare standard output and standard error capture.
+- [ ] Extension checks — Practice and review both new question sets.
+- [ ] Expanded Day 5 complete — Core work and both extensions reviewed.
 
 ## Why this matters
 
@@ -213,9 +217,160 @@ $ lsof -nP -iTCP:8765 -sTCP:LISTEN
 
 **Share back:** Send your incident note, relevant outputs and log lines, and answers.
 
-## Completion criteria
+## Core completion criteria
 
 - [ ] You captured startup and request logs in a local file.
 - [ ] You diagnosed an incorrect port using client, process, listener, and log evidence.
 - [ ] You restored HTTP 200 by correcting the client port.
 - [ ] You wrote an incident note and stopped the server with Ctrl-C.
+
+## Extension 4 — Compare HTTP 404 with curl's exit status
+
+**Context:** An HTTP error response can still be a completed transfer. Use a separate local workspace to see how curl reports that distinction. Review [curl --fail](https://curl.se/docs/manpage.html#-f) and [curl exit codes](https://curl.se/docs/manpage.html#EXIT-CODES).
+
+Finish the core server cleanup first. In **Terminal A**:
+
+- `cd` enters the project root. `mkdir -p` creates an extension-only workspace and its `served` subdirectory. Serve this empty subdirectory so `/missing.txt` has no matching file; keep logs outside it.
+- `python3 -u -m http.server` starts the Python server with unbuffered output. Port `8775` is separate from the core lab, `--bind 127.0.0.1` restricts it to loopback, and `--directory` selects the served directory.
+- `> ... 2>&1` captures startup and request messages in the extension log, overwriting an earlier extension run.
+- The leading `$` is a prompt marker; type one command and press Enter per line.
+
+```console
+$ cd /Users/citradigital/Desktop/learn/platform-engineer
+$ mkdir -p labs/01-linux/day-05/workspace/extension-04/served
+$ python3 -u -m http.server 8775 --bind 127.0.0.1 --directory labs/01-linux/day-05/workspace/extension-04/served > labs/01-linux/day-05/workspace/extension-04/server.log 2>&1
+```
+
+Leave Terminal A running. If it returns to a prompt, read the log from Terminal B. If the port is occupied, use another unused port consistently; do not stop an unknown process. Keep `served` empty, including on reruns.
+
+In **Terminal B**:
+
+- `curl --noproxy 127.0.0.1` keeps this loopback request direct even if proxy variables are configured. `--silent --show-error` suppresses the progress meter and preserves errors; `--output /dev/null` discards the body.
+- `--write-out 'http=%{http_code}\n'` prints the HTTP response code. The two timeouts bound connection establishment and the full request to two and five seconds.
+- `--fail` makes this HTTP 404 produce curl exit status `22` and suppresses the response body.
+- In `printf 'exit=%s\n' "$?"`, `%s` formats its argument and `\n` adds a newline. **Type the literal `$?`**: the shell expands it to the previous command's exit status. Run this immediately after each curl command; any intervening command replaces that status. The leading `$` still remains only a prompt marker.
+
+```console
+$ cd /Users/citradigital/Desktop/learn/platform-engineer
+$ curl --noproxy 127.0.0.1 --silent --show-error --output /dev/null --connect-timeout 2 --max-time 5 --write-out 'http=%{http_code}\n' http://127.0.0.1:8775/missing.txt
+$ printf 'exit=%s\n' "$?"
+$ curl --noproxy 127.0.0.1 --silent --show-error --fail --output /dev/null --connect-timeout 2 --max-time 5 --write-out 'http=%{http_code}\n' http://127.0.0.1:8775/missing.txt
+$ printf 'exit=%s\n' "$?"
+$ tail -n 10 labs/01-linux/day-05/workspace/extension-04/server.log
+```
+
+### Expected result
+
+**Terminal A:** The server stays in the foreground with its output redirected.
+
+```console
+$ cd /Users/citradigital/Desktop/learn/platform-engineer
+$ mkdir -p labs/01-linux/day-05/workspace/extension-04/served
+$ python3 -u -m http.server 8775 --bind 127.0.0.1 --directory labs/01-linux/day-05/workspace/extension-04/served > labs/01-linux/day-05/workspace/extension-04/server.log 2>&1
+```
+
+**Terminal B:** Diagnostic wording and timestamps vary. Error text and write-out output use different streams, so their displayed order can vary. Both requests reach the server and receive 404.
+
+```console
+$ cd /Users/citradigital/Desktop/learn/platform-engineer
+$ curl --noproxy 127.0.0.1 --silent --show-error --output /dev/null --connect-timeout 2 --max-time 5 --write-out 'http=%{http_code}\n' http://127.0.0.1:8775/missing.txt
+http=404
+$ printf 'exit=%s\n' "$?"
+exit=0
+$ curl --noproxy 127.0.0.1 --silent --show-error --fail --output /dev/null --connect-timeout 2 --max-time 5 --write-out 'http=%{http_code}\n' http://127.0.0.1:8775/missing.txt
+curl: (22) The requested URL returned error: 404
+http=404
+$ printf 'exit=%s\n' "$?"
+exit=22
+$ tail -n 10 labs/01-linux/day-05/workspace/extension-04/server.log
+Serving HTTP on 127.0.0.1 port 8775 (http://127.0.0.1:8775/) ...
+127.0.0.1 - - [09/Oct/2026 10:05:00] code 404, message File not found
+127.0.0.1 - - [09/Oct/2026 10:05:00] "GET /missing.txt HTTP/1.1" 404 -
+127.0.0.1 - - [09/Oct/2026 10:05:01] code 404, message File not found
+127.0.0.1 - - [09/Oct/2026 10:05:01] "GET /missing.txt HTTP/1.1" 404 -
+```
+
+### Check your understanding
+
+1. Why does ordinary curl return exit status zero for this HTTP 404?
+2. What changed when `--fail` was added?
+3. Why must `printf` run immediately after curl?
+
+### Answer key
+
+1. Curl completed the transfer; by default, HTTP 404 alone does not make the command fail. The resource request still failed at the HTTP level.
+2. Curl treats this HTTP error as a command failure, with exit status `22`; the server still responds with 404.
+3. `$?` reports only the immediately preceding command. Running another command first loses curl's status.
+
+**Cleanup and safe rerun:** Press **Ctrl-C in Terminal A** and wait for its prompt. In Terminal B, check the listener with the command below; no output is expected. Keep the extension log as evidence. A rerun overwrites only this extension log; the served directory must stay empty.
+
+```console
+$ lsof -nP -iTCP:8775 -sTCP:LISTEN
+```
+
+**Expected result after Ctrl-C:**
+
+```console
+$ lsof -nP -iTCP:8775 -sTCP:LISTEN
+```
+
+## Extension 5 — See which output stream a log captures
+
+**Context:** A quiet log file can result from capturing the wrong stream. Python's HTTP request logging writes to standard error, as documented for [BaseHTTPRequestHandler.log_message](https://docs.python.org/3/library/http.server.html#http.server.BaseHTTPRequestHandler.log_message). Use controlled text to make the stream routing visible. Read the [zsh redirection reference](https://zsh.sourceforge.io/Doc/Release/Redirection.html).
+
+Use either terminal after the extension server is stopped:
+
+- `mkdir -p` creates an extension-only directory. `sh -c` runs the single quoted command string in a child shell.
+- Each child runs two `printf` commands: `stdout line` goes to descriptor 1, and `stderr line` goes to descriptor 2 because of `>&2`. The semicolon inside the quoted string separates the two child commands; enter the whole displayed line once.
+- The first outer `>` redirects only stdout into `stdout-only.log`. Stderr remains visible in the terminal.
+- The second outer `> ... 2>&1` first sends stdout to `combined.log`, then sends stderr to the same destination. Redirections are processed left to right; reversing them would send stderr to the original stdout destination.
+- `cat` prints each saved file. `>` overwrites these two extension files on a rerun, and `\n` in each `printf` format ends the line.
+- The leading `$` is a prompt marker, not text to type. The quoted text contains no shell variable placeholders.
+
+```console
+$ cd /Users/citradigital/Desktop/learn/platform-engineer
+$ mkdir -p labs/01-linux/day-05/workspace/extension-05
+$ sh -c 'printf "stdout line\n"; printf "stderr line\n" >&2' > labs/01-linux/day-05/workspace/extension-05/stdout-only.log
+$ cat labs/01-linux/day-05/workspace/extension-05/stdout-only.log
+$ sh -c 'printf "stdout line\n"; printf "stderr line\n" >&2' > labs/01-linux/day-05/workspace/extension-05/combined.log 2>&1
+$ cat labs/01-linux/day-05/workspace/extension-05/combined.log
+```
+
+### Expected result
+
+The first child prints `stderr line` directly to the terminal. The second child is silent there; both lines appear when you read its file.
+
+```console
+$ cd /Users/citradigital/Desktop/learn/platform-engineer
+$ mkdir -p labs/01-linux/day-05/workspace/extension-05
+$ sh -c 'printf "stdout line\n"; printf "stderr line\n" >&2' > labs/01-linux/day-05/workspace/extension-05/stdout-only.log
+stderr line
+$ cat labs/01-linux/day-05/workspace/extension-05/stdout-only.log
+stdout line
+$ sh -c 'printf "stdout line\n"; printf "stderr line\n" >&2' > labs/01-linux/day-05/workspace/extension-05/combined.log 2>&1
+$ cat labs/01-linux/day-05/workspace/extension-05/combined.log
+stdout line
+stderr line
+```
+
+### Check your understanding
+
+1. Why is `stderr line` absent from `stdout-only.log`?
+2. What does `2>&1` mean when it follows the file redirection?
+3. Why could redirecting only stdout miss Python HTTP request logs?
+
+### Answer key
+
+1. `>` captures descriptor 1 only; the child explicitly writes that line to descriptor 2.
+2. It sends descriptor 2 to descriptor 1's current destination, which is already the file.
+3. `BaseHTTPRequestHandler.log_message` writes request messages to stderr, so stdout-only capture does not include them.
+
+**Cleanup and safe rerun:** No long-running process is created. Keep the two small logs as evidence. Rerunning these commands overwrites only the named extension files; no deletion or administrator privileges are needed.
+
+## Expanded Day 5 completion criteria
+
+- [ ] You observed HTTP 404 with curl exit statuses 0 and 22 and read `$?` immediately.
+- [ ] You stopped the extension server and confirmed its listener was gone.
+- [ ] You compared stdout-only and combined logs and explained redirection order.
+- [ ] You answered both extensions’ checks and reviewed their evidence.
+- [ ] Expanded Day 5 complete — Core criteria and all extension criteria reviewed.

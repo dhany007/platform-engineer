@@ -19,12 +19,14 @@ The exercise commands intentionally use paths relative to the project root. Foll
 ## Day progress
 
 - [x] Day 1 — Shell, paths, files, pipes, and redirection; core and extensions complete: [lab](day-01/README.md)
-- [x] Day 2 — Users, permissions, and processes: [lab](day-02/README.md)
-- [x] Day 3 — Ports and TCP connections: [lab](day-03/README.md)
-- [ ] Day 4 — DNS, HTTP, and TLS: [lab](day-04/README.md)
-- [ ] Day 5 — Logs and first-response troubleshooting: [lab](day-05/README.md)
+- [ ] Day 2 — Users, permissions, and processes; core complete, extensions pending: [lab](day-02/README.md)
+- [ ] Day 3 — Ports and TCP connections; core complete, extensions pending: [lab](day-03/README.md)
+- [ ] Day 4 — DNS, HTTP, and TLS; core and extensions pending: [lab](day-04/README.md)
+- [ ] Day 5 — Logs and first-response troubleshooting; core and extensions pending: [lab](day-05/README.md)
 
 Day 1 now covers the entire Ubuntu beginner tutorial over multiple self-paced sessions. Its original Core Day 1 exercises and answers were completed earlier; all extensions and their checks are now practiced and reviewed, so the expanded day is complete. All Day 1 material stays in its lab file.
+
+Days 2–5 also include two extensions each. The completed core work for Days 2 and 3 remains checked inside those day guides. Their expanded-day checkboxes will be marked after the new extensions and answers are reviewed; Days 4 and 5 have not been started.
 
 Mark a day complete after its exercises and answers have been reviewed.
 

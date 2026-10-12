@@ -1,6 +1,6 @@
 # Day 4 — DNS, HTTP, and TLS
 
-**Time:** About 60–90 minutes.
+**Time:** About 60–90 minutes for the core exercises. The extensions are additional self-paced sessions.
 
 In the command blocks below, `$` is a prompt marker, not part of the command. Type the text after `$` and press Enter once per line.
 
@@ -10,7 +10,11 @@ In the command blocks below, `$` is a prompt marker, not part of the command. Ty
 - [ ] Exercise 2 — Read an HTTP exchange over HTTPS.
 - [ ] Exercise 3 — Describe the request path from your observations.
 - [ ] Check your understanding — Answer the three questions below.
-- [ ] Day 4 complete — All exercises and answers reviewed.
+- [ ] Core Day 4 complete — Exercises 1–3 and answers reviewed.
+- [ ] Extension 4 — Measure request timing milestones.
+- [ ] Extension 5 — Test an observed address with the hostname preserved.
+- [ ] Extension checks — Practice and review both new question sets.
+- [ ] Expanded Day 4 complete — Core work and both extensions reviewed.
 
 ## Why this matters
 
@@ -160,9 +164,115 @@ Attach your own DNS and HTTP/TLS evidence when doing the exercise; this written 
 
 **Share back:** Send DNS observations, HTTP/TLS observations, your request-path notes, and answers. Note any network-dependent exercise you need to repeat.
 
-## Completion criteria
+## Core completion criteria
 
 - [ ] You identified a DNS record's type, address, and TTL.
 - [ ] You located the method, path, status, headers, and body in an HTTP exchange.
 - [ ] You explained how TLS fits between connection establishment and HTTP.
 - [ ] You wrote a request-path explanation supported by your observations.
+
+## Extension 4 — Measure request timing milestones
+
+**Context:** A request can succeed yet feel slow. Measure where elapsed time accumulates before deciding which part of the request path to investigate. Read the [curl write-out reference](https://curl.se/docs/manpage.html#-w).
+
+- `--silent --show-error` hides the progress meter while retaining error messages. `--output /dev/null` discards the downloaded body; curl still transfers it.
+- `--connect-timeout 5` bounds connection establishment and `--max-time 15` bounds the entire operation, in seconds.
+- `--write-out` prints the quoted format after the transfer. Curl substitutes `%{...}` variables; `\n` adds a newline. Single quotes preserve this format for curl.
+- The leading `$` below is only a prompt marker. Type the complete command on one line and press Enter once.
+
+```console
+$ curl --silent --show-error --output /dev/null --connect-timeout 5 --max-time 15 --write-out 'lookup=%{time_namelookup}\nconnect=%{time_connect}\ntls=%{time_appconnect}\nfirst_byte=%{time_starttransfer}\ntotal=%{time_total}\n' https://example.com/
+```
+
+For a successful direct HTTPS connection, these values are cumulative milestones measured in seconds from the start:
+
+| Field | Milestone |
+| --- | --- |
+| `time_namelookup` | Name lookup finished. |
+| `time_connect` | Connection to the remote host or proxy established. |
+| `time_appconnect` | TLS handshake finished. |
+| `time_starttransfer` | First response byte arrived, including earlier setup and server processing. |
+| `time_total` | Transfer finished. |
+
+Do not add the five values together. For this simple direct connection, subtract adjacent milestones to estimate intervals: `time_appconnect - time_connect` estimates TLS setup, and `time_total - time_starttransfer` estimates the remaining transfer. Time to first byte also reflects network travel and server work, so it does not isolate application processing.
+
+### Expected result
+
+Illustrative seconds only; network load, DNS caches, server behavior, proxies, and curl's protocol choice change the numbers. A proxy can introduce its own lookup, connection, and tunnel setup. Failed requests may leave later milestones zero or incomplete; record errors before interpreting them.
+
+```console
+$ curl --silent --show-error --output /dev/null --connect-timeout 5 --max-time 15 --write-out 'lookup=%{time_namelookup}\nconnect=%{time_connect}\ntls=%{time_appconnect}\nfirst_byte=%{time_starttransfer}\ntotal=%{time_total}\n' https://example.com/
+lookup=0.012000
+connect=0.045000
+tls=0.091000
+first_byte=0.140000
+total=0.142000
+```
+
+### Check your understanding
+
+1. In the sample, what is the approximate TLS setup interval?
+2. Why would adding all five numbers overstate the request duration?
+3. Does a larger first-byte time prove the application itself became slower?
+
+### Answer key
+
+1. `0.091 - 0.045 = 0.046` seconds for this direct connection.
+2. Earlier intervals are already included in later cumulative milestones; total duration is `0.142` seconds.
+3. No. Lookup, connection/TLS setup, network travel, proxies, and server processing can all contribute.
+
+**Cleanup and safe rerun:** No files or services are created. Repeat the bounded command a few times and retain the observations in your notes; treat variation as evidence, not a guaranteed performance threshold.
+
+## Extension 5 — Connect to an observed address while preserving HTTPS identity
+
+**Context:** Test one DNS answer while still asking for the same HTTPS site. Read [everything curl: Name resolve tricks](https://everything.curl.dev/usingcurl/connections/name.html).
+
+- `dig example.com A +short` asks for concise IPv4 answers. `awk` selects the first line shaped like an IPv4 address and exits; any alias lines are skipped.
+- `example_address=$(...)` assigns that observed address to a shell variable; type the literal `$()` so the shell runs the enclosed pipeline. `printf` displays the selection. If it is blank, investigate DNS before continuing.
+- `--resolve` supplies curl's hostname-and-port mapping for this invocation. Double quotes expand the variable while keeping the mapping one argument. The literal `${example_address:?No IPv4 A answer found}` expands to its value, or stops the command with an error if it is empty or unset. The URL remains `https://example.com/`, so the HTTP hostname, TLS SNI name, and certificate hostname validation remain `example.com`.
+- `-v` shows connection and TLS diagnostics; `--output /dev/null` discards the body. Connection and total timeouts remain five and fifteen seconds. Certificate verification remains enabled.
+- `$` at the beginning is a prompt marker. Enter one command per line. Type the internal `$` characters in `$(...)`, `"$example_address"`, and `${example_address:?...}` because they are shell syntax.
+
+```console
+$ example_address=$(dig example.com A +short | awk '/^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+$/ {print; exit}')
+$ printf 'Selected address: %s\n' "$example_address"
+$ curl -v --output /dev/null --connect-timeout 5 --max-time 15 --resolve "example.com:443:${example_address:?No IPv4 A answer found}" https://example.com/
+```
+
+Compare curl's attempted remote address with the selected DNS answer. A configured HTTP proxy may resolve the origin itself, so `--resolve` does not necessarily control the origin address reached through that proxy. Inspect verbose output for proxy/CONNECT details and record this limitation; do not change required proxy settings. An observed DNS address can also stop working later, so refresh the answer before retrying.
+
+### Expected result
+
+This transcript illustrates a bounded connection failure using an address observed during validation. The address is not a fixed answer or a value to copy: your command selects its own current DNS answer. A DNS answer does not guarantee that the selected address is reachable from your network. A successful connection instead shows connection/TLS diagnostics and an HTTP response; verify those from your own output. Bracketed notes omit output.
+
+```console
+$ example_address=$(dig example.com A +short | awk '/^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+$/ {print; exit}')
+$ printf 'Selected address: %s\n' "$example_address"
+Selected address: 104.20.23.154
+$ curl -v --output /dev/null --connect-timeout 5 --max-time 15 --resolve "example.com:443:${example_address:?No IPv4 A answer found}" https://example.com/
+[progress meter and some diagnostics omitted]
+* Added example.com:443:104.20.23.154 to DNS cache
+*   Trying 104.20.23.154:443...
+curl: (28) Failed to connect to example.com port 443 after 5006 ms: Timeout was reached
+```
+
+### Check your understanding
+
+1. Where does `example_address` come from, and what happens if it is empty?
+2. Why keep the hostname in the URL instead of replacing it with the IP address?
+3. Why might this command fail to test the chosen origin address through a proxy?
+
+### Answer key
+
+1. The pipeline selects an observed IPv4 `A` answer from `dig`. If the selection is empty, the shell expansion stops the curl command with an error instead of attempting a request.
+2. The hostname supplies the HTTP identity and TLS SNI and is checked against the certificate; `--resolve` changes address selection for that hostname/port.
+3. The proxy may perform origin resolution and connection itself. Curl's connection diagnostics must be interpreted in that context.
+
+**Cleanup and safe rerun:** The shell variable remains in this terminal session, while the mapping is local to the curl invocation and creates no files or persistent DNS changes. Refresh DNS and repeat with a currently observed address. Record certificate or connection errors without disabling verification.
+
+## Expanded Day 4 completion criteria
+
+- [ ] You recorded timing milestones and explained cumulative values and network/proxy variability.
+- [ ] You tested an observed A record with `--resolve` and explained hostname identity and proxy limitations.
+- [ ] You answered both extensions’ checks and reviewed their evidence.
+- [ ] Expanded Day 4 complete — Core criteria and all extension criteria reviewed.
