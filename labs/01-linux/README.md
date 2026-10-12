@@ -20,7 +20,7 @@ The exercise commands intentionally use paths relative to the project root. Foll
 
 - [ ] Day 1 — Shell, paths, files, pipes, and redirection; completed core plus pending extensions: [lab](day-01/README.md)
 - [x] Day 2 — Users, permissions, and processes: [lab](day-02/README.md)
-- [ ] Day 3 — Ports and TCP connections: [lab](day-03/README.md)
+- [x] Day 3 — Ports and TCP connections: [lab](day-03/README.md)
 - [ ] Day 4 — DNS, HTTP, and TLS: [lab](day-04/README.md)
 - [ ] Day 5 — Logs and first-response troubleshooting: [lab](day-05/README.md)
 

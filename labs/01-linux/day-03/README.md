@@ -6,11 +6,11 @@ In the command blocks below, `$` is a prompt marker, not part of the command. Ty
 
 ## Progress
 
-- [ ] Exercise 1 — Start a local HTTP listener.
-- [ ] Exercise 2 — Inspect the listener and make requests.
-- [ ] Exercise 3 — Stop the listener and observe a connection failure.
-- [ ] Check your understanding — Answer the three questions below.
-- [ ] Day 3 complete — All exercises and answers reviewed.
+- [x] Exercise 1 — Start a local HTTP listener.
+- [x] Exercise 2 — Inspect the listener and make requests.
+- [x] Exercise 3 — Stop the listener and observe a connection failure.
+- [x] Check your understanding — Answer the three questions below.
+- [x] Day 3 complete — All exercises and answers reviewed.
 
 ## Why this matters
 
@@ -148,7 +148,7 @@ curl: (7) Failed to connect to 127.0.0.1 port 8765 after 0 ms: Could not connect
 
 ## Completion criteria
 
-- [ ] You reached your greeting through a loopback TCP listener.
-- [ ] You associated the listener with its PID.
-- [ ] You explained HTTP 404 versus a connection failure.
-- [ ] The foreground server is stopped with Ctrl-C.
+- [x] You reached your greeting through a loopback TCP listener.
+- [x] You associated the listener with its PID.
+- [x] You explained HTTP 404 versus a connection failure.
+- [x] The foreground server is stopped with Ctrl-C.
