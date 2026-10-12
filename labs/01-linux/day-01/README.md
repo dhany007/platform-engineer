@@ -16,10 +16,10 @@ Commands start with a `$` prompt marker: type only the text after that leading m
 - [x] Extension 6 — Copy, move, and rename.
 - [x] Extension 7 — Streams, counts, sorting, uniqueness, and manuals.
 - [x] Extension 8 — Hidden files and filename case.
-- [ ] Extension 9 — Inspect and clean up extension files.
-- [ ] Extension 10 — Explain administrator access and Ubuntu software tools.
-- [ ] Extension checks — Answer and review the new questions.
-- [ ] Expanded Day 1 complete — Core and all extensions practiced and reviewed.
+- [x] Extension 9 — Inspect and clean up extension files.
+- [x] Extension 10 — Explain administrator access and Ubuntu software tools.
+- [x] Extension checks — Answer and review the new questions.
+- [x] Expanded Day 1 complete — Core and all extensions practiced and reviewed.
 
 ## Why this matters
 
@@ -181,7 +181,7 @@ Answer in your own words:
 2. `|` passes one command’s output to another command as input. `>` writes output to a file and overwrites its previous contents.
 3. The file is overwritten with the same two lines; they are not appended.
 
-**Review status:** The command outputs and answers for Exercises 1–3 have been reviewed. Core Day 1 is complete. The expanded Day 1 remains incomplete until the extensions are practiced and reviewed.
+**Review status:** The command outputs and answers for Exercises 1–3 have been reviewed. Core Day 1 is complete. The expanded Day 1 is also complete; all extensions and their checks have been practiced and reviewed.
 
 ## Core completion criteria
 
@@ -612,13 +612,13 @@ Ubuntu's `apt` manages packages from configured repositories. In the conceptual 
 ## Expanded Day 1 completion criteria
 
 - [x] Core Exercises 1–3 and their answers remain reviewed.
-- [ ] Extensions 4–8 practiced, including pager/terminal controls and new checks answered.
-- [ ] Extension 9 cleanup completed or documented if additional files need preservation.
-- [ ] Extension 10's conceptual task and answers reviewed without privileged execution.
-- [ ] You can explain options, quoting, globbing, streams, copying/moving, hidden names, case caveats, and least-privilege use.
-- [ ] Expanded Day 1 complete — Update the day checkbox only after all new work is reviewed.
+- [x] Extensions 4–8 practiced, including pager/terminal controls and new checks answered.
+- [x] Extension 9 cleanup completed or documented if additional files need preservation.
+- [x] Extension 10's conceptual task and answers reviewed without privileged execution.
+- [x] You can explain options, quoting, globbing, streams, copying/moving, hidden names, case caveats, and least-privilege use.
+- [x] Expanded Day 1 complete — All new work reviewed and the day checkbox updated.
 
-**Share back:** Send extension observations and answers, noting any commands you need to repeat. The completed core remains complete while these extensions are pending.
+**Review status:** All extension observations and answers have been reviewed. Core Day 1 and the expanded day are complete. Bring any further questions to the next session.
 
 ## Further written reading
 
