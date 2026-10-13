@@ -4,6 +4,10 @@
 
 In the command blocks below, `$` is a prompt marker, not part of the command. Type the text after `$` and press Enter once per line, using Terminal A or B as instructed.
 
+Flag meanings in parentheses are memory aids, not invented long-option aliases. BSD (**Berkeley Software Distribution**)/macOS tools may not support GNU (**GNU’s Not Unix**, a recursive acronym) long options; use only the options documented for the installed command.
+
+TCP means **Transmission Control Protocol**; HTTP means **Hypertext Transfer Protocol**. IP means **Internet Protocol**; IPv4 and IPv6 are **Internet Protocol version 4** and **version 6**. Command names, abbreviations, and option meanings are also collected in the [glossary](../../../notes/glossary.md).
+
 ## Progress
 
 - [x] Exercise 1 — Start a local HTTP listener.
@@ -38,11 +42,11 @@ Exercises 1–3 and their checked criteria remain complete. The new extensions b
 
 Open two terminal tabs, called **Terminal A** and **Terminal B**. Run this block in **Terminal A**:
 
-- `cd` enters the project root; `mkdir -p` creates an isolated workspace and missing parents.
-- `printf` produces a line ending in `\n`; `>` creates or overwrites the lab's `index.html`.
-- `python3 -m http.server` runs Python's built-in HTTP server module. `8765` is the TCP port.
+- `cd` (**change directory**) enters the project root; `mkdir` (**make directory**) with `-p` uses `-p` (parents) to create an isolated workspace and missing parents.
+- `printf` (**formatted print**) produces a line ending in `\n`; `>` creates or overwrites the lab's `index.html`. HTML means **Hypertext Markup Language**; this sample file contains plain greeting text.
+- `python3 -m http.server` uses `-m` (module) to run Python's built-in HTTP server module. `8765` is the TCP port.
 - `--bind 127.0.0.1` accepts connections only through this computer's IPv4 loopback address.
-- `--directory` serves only the specified lab workspace. This is a static file server, not the future Go API.
+- `--directory` serves only the specified lab workspace. This is a static file server, not the future Go application programming interface (**API**).
 
 ```console
 $ cd /Users/citradigital/Desktop/learn/platform-engineer
@@ -51,7 +55,7 @@ $ printf 'Hello from Day 3\n' > labs/01-linux/day-03/workspace/index.html
 $ python3 -m http.server 8765 --bind 127.0.0.1 --directory labs/01-linux/day-03/workspace
 ```
 
-Leave Terminal A running while you use Terminal B. Expect a serving message. If you see “Address already in use,” stop this attempt; do not stop an unknown process. Pick an unused port such as `8766` and substitute it in every command today. HTTP uses the port after the colon in the URL.
+Leave Terminal A running while you use Terminal B. Expect a serving message. If you see “Address already in use,” stop this attempt; do not stop an unknown process. Pick an unused port such as `8766` and substitute it in every command today. HTTP uses the port after the colon in the URL (**Uniform Resource Locator**, the resource address).
 
 ### Expected result
 
@@ -69,9 +73,9 @@ Serving HTTP on 127.0.0.1 port 8765 (http://127.0.0.1:8765/) ...
 
 Run in **Terminal B**:
 
-- `lsof` lists open files and sockets. `-nP` keeps IP addresses numeric (`-n`) and ports numeric (`-P`).
-- `-iTCP:8765` selects TCP sockets on this port; `-sTCP:LISTEN` restricts them to listening sockets. Read the COMMAND, PID, and NAME columns.
-- `curl` requests a URL. `-i` includes HTTP response headers alongside the body. `--connect-timeout 2` limits connection establishment to two seconds; `--max-time 5` caps the whole operation at five seconds.
+- `lsof` means **list open files**; it lists open files and sockets. `-nP` keeps IP addresses numeric (`-n`) and ports numeric (`-P`).
+- `-iTCP:8765` uses `-i` to select Internet sockets, restricted here to TCP on this port; `-sTCP:LISTEN` uses `-s` to select a socket state, restricted here to listening TCP sockets. Read the COMMAND, PID (**process identifier**, process ID), and NAME columns.
+- `curl` is a **URL transfer tool**; here it requests a URL. `-i` (`--include`) includes HTTP response headers alongside the body. `--connect-timeout 2` limits connection establishment to two seconds; `--max-time 5` caps the whole operation at five seconds.
 - `http://` selects plaintext HTTP; `127.0.0.1` selects this computer; `8765` selects the listener; `/` requests the root resource.
 - `/missing-file` requests a file you did not create. HTTP 404 is an expected application response; a connection succeeded even though that resource is absent.
 
@@ -85,7 +89,7 @@ Expect a Python listener on `127.0.0.1:8765`, a 200 response with your greeting,
 
 ### Expected result
 
-This is Terminal B. PID 12345, socket metadata, Python version, timestamps, and headers are samples. Output omissions are labeled in brackets. The 404 is expected: the connection and HTTP exchange succeeded, but the resource is missing. Terminal A also logs each request.
+This is Terminal B. PID 12345, socket metadata, Python version, timestamps, and headers are samples. FD means **file descriptor**, an open handle owned by the process; `3u` is descriptor 3 opened for reading and writing. GMT means **Greenwich Mean Time**, the time reference shown in these HTTP date headers. UTF-8 means **Unicode Transformation Format, 8-bit**, the text encoding shown in the error response. Output omissions are labeled in brackets. The 404 is expected: the connection and HTTP exchange succeeded, but the resource is missing. Terminal A also logs each request.
 
 ```console
 $ lsof -nP -iTCP:8765 -sTCP:LISTEN
@@ -113,12 +117,12 @@ Content-Type: text/html;charset=utf-8
 
 ## Exercise 3 — Stop the listener and observe a connection failure
 
-In **Terminal A**, press **Ctrl-C** once. This sends SIGINT to the foreground server and returns you to the shell. No command needs to be pasted for this step.
+In **Terminal A**, press **Ctrl-C** once. This sends SIGINT (**signal interrupt**) to the foreground server and returns you to the shell. No command needs to be pasted for this step.
 
 Then run in **Terminal B**:
 
 - `lsof` uses the same filters as Exercise 2. With the server stopped, no listener output is expected, and the command can exit with a nonzero status.
-- `curl -v` prints connection and protocol details. The timeout options retain the same bounds as above.
+- `curl -v` uses `-v` (`--verbose`) to print connection and protocol details. The timeout options retain the same bounds as above.
 
 ```console
 $ lsof -nP -iTCP:8765 -sTCP:LISTEN
@@ -165,7 +169,7 @@ curl: (7) Failed to connect to 127.0.0.1 port 8765 after 0 ms: Could not connect
 
 A process can fail to start because its requested address/port is already occupied. Here both servers belong to you: the second startup fails, while the first should keep serving. This separates a startup error from an outage of the existing listener.
 
-**Written reading:** [Python: http.server command-line interface](https://docs.python.org/3/library/http.server.html#command-line-interface) and [Apple: bind(2), EADDRINUSE](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/bind.2.html). `EADDRINUSE` denotes an address already in use; Python's error text/number varies by OS.
+**Written reading:** [Python: http.server command-line interface](https://docs.python.org/3/library/http.server.html#command-line-interface) and [Apple: bind(2), EADDRINUSE](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/bind.2.html). `EADDRINUSE` denotes an address already in use; Python's error text/number varies by operating system (**OS**).
 
 Use Terminal A for the first server and Terminal B for preparation, the second attempt, and requests. Before the commands:
 
@@ -174,7 +178,7 @@ Use Terminal A for the first server and Terminal B for preparation, the second a
 - `python3 -m http.server 8875` runs the built-in static server on port 8875. `--bind 127.0.0.1` limits it to IPv4 loopback; `--directory` specifies the isolated serving folder. Leave Terminal A running during the Terminal B steps.
 - `curl --noproxy '*'` bypasses proxy routing for this invocation; quoting prevents the shell from expanding `*`. `-i` includes headers. `--connect-timeout 2` and `--max-time 5` bound connection establishment and the entire request in seconds.
 - The second Python command asks for exactly the same loopback address and port. Its failure is intentional. It should return to Terminal B's prompt; do not try a different port for just the second command, as that would remove the collision.
-- Compare `lsof` PIDs before and after the failed attempt, and compare both curl bodies. To clean up, press **Ctrl-C in Terminal A** only after verification, then run Terminal B's final listener check. `rm` deletes the two explicitly named fixture files; `rmdir` removes only their empty directories.
+- Compare `lsof` PIDs before and after the failed attempt, and compare both curl bodies. To clean up, press **Ctrl-C in Terminal A** only after verification, then run Terminal B's final listener check. `rm` (**remove**) deletes the two explicitly named fixture files; `rmdir` (**remove directory**) removes only their empty directories.
 
 **Prepare in Terminal B:**
 
@@ -288,7 +292,7 @@ Before the commands:
 - `mkdir -p` creates `extensions/ipv6`; `printf ... > ...` writes a newline-terminated greeting only in its `index.html`.
 - In Terminal A, the absolute `cd` sets the working directory independently. `python3 -m http.server 8876 --bind ::1 --directory ...` starts a static server restricted to IPv6 loopback and the isolated serving directory. Leave it running.
 - In Terminal B, `lsof` should identify an IPv6 socket on `[::1]:8876`. `curl --noproxy '*'` bypasses proxies only for that invocation; the quoted asterisk remains literal.
-- `-g` disables curl's own URL range/glob interpretation. The single-quoted URL `'http://[::1]:8876/'` also prevents zsh glob interpretation of square brackets. URL brackets enclose the IPv6 literal so its internal colons can be distinguished from the colon before the port.
+- `-g` (`--globoff`) disables curl's own URL range/glob interpretation. The single-quoted URL `'http://[::1]:8876/'` also prevents zsh (**Z shell**) glob interpretation of square brackets. URL brackets enclose the IPv6 literal so its internal colons can be distinguished from the colon before the port.
 - `-i` includes headers; `--connect-timeout 2` and `--max-time 5` limit connection establishment and the full request. The request to `127.0.0.1` uses the same port but an IPv4 destination. With only this IPv6-loopback listener, that IPv4 request should fail **as expected**.
 - Press **Ctrl-C in Terminal A** to stop your server after both observations, then check for a remaining listener in Terminal B. `rm` removes the single named fixture; `rmdir` removes its empty directory.
 

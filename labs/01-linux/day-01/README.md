@@ -4,6 +4,8 @@
 
 Commands start with a `$` prompt marker: type only the text after that leading marker. Expected-result transcripts repeat commands and show representative output; read them rather than pasting them. Silent commands have no output line. Names such as `learner`, timestamps, listings, and pager displays are illustrative.
 
+Command names, abbreviations, and option meanings are also collected in the [glossary](../../../notes/glossary.md).
+
 ## Progress
 
 - [x] Exercise 1 — Locate the project.
@@ -65,9 +67,9 @@ Open a terminal and enter the project directory. The path below matches this lap
 
 Before running the commands, know what each one does:
 
-- `cd /Users/citradigital/Desktop/learn/platform-engineer` changes to the project directory using an **absolute path**. A path beginning with `/` starts at the filesystem root.
-- `pwd` prints the current working directory, so you can confirm where you are.
-- `ls -la` lists entries with details (`-l`) and includes hidden entries (`-a`), such as `.git`.
+- `cd` means **change directory**. `cd /Users/citradigital/Desktop/learn/platform-engineer` changes to the project directory using an **absolute path**. A path beginning with `/` starts at the filesystem root.
+- `pwd` means **print working directory**; it prints the current working directory, so you can confirm where you are.
+- `ls` means **list**; `ls -la` lists entries with details (`-l`, long listing) and includes hidden entries (`-a`, all entries), such as `.git`.
 - `cd labs/01-linux` changes directory using a **relative path**. It is resolved from your current directory.
 - `cd ../..` moves up two parent directories; each `..` means one parent.
 
@@ -109,10 +111,10 @@ $ pwd
 
 Run these commands from the project root:
 
-- `mkdir -p .../workspace` creates the target directory and any missing parent directories. Repeating it is safe when the directories already exist.
-- `printf 'service=go-api\nport=8080\n'` produces two lines of text. Each `\n` means a new line.
+- `mkdir` means **make directory**; `mkdir -p .../workspace` uses `-p` (parents) to create the target directory and any missing parent directories. Repeating it is safe when the directories already exist.
+- `printf` means **formatted print**; `printf 'service=go-api\nport=8080\n'` produces two lines of text. Each `\n` means a new line.
 - `>` sends that text to `sample.conf`. It creates the file if needed and overwrites existing contents.
-- `cat .../sample.conf` prints the file's contents; `cat` expects a file path here, not a directory path.
+- `cat` means **concatenate**: join file contents in sequence. With one file, `cat .../sample.conf` prints the file's contents; `cat` expects a file path here, not a directory path.
 - `ls -la .../workspace` confirms the file exists and shows its details.
 
 ```console
@@ -143,11 +145,11 @@ drwxr-xr-x 3 learner staff 96 Oct  9 10:00 ..
 
 Run these commands from the project root:
 
-- `find roadmap -type f` lists regular files under `roadmap`, including files in subdirectories.
+- `find` searches a directory tree. `find roadmap -type f` uses `-type` to select an entry type and `f` for **regular file**; it lists regular files under `roadmap`, including files in subdirectories.
 - `| sort` passes those filenames to `sort`, which puts them in alphabetical order.
 - `>` saves the sorted list to `roadmap-files.txt`, overwriting any previous contents.
 - `cat .../roadmap-files.txt` displays the saved list.
-- `wc -l` counts lines. `< .../roadmap-files.txt` supplies the file as input, so the output is only the number.
+- `wc` means **word count**; it also counts lines and bytes. `wc -l` uses `-l` (lines) to count lines. `< .../roadmap-files.txt` supplies the file as input, so the output is only the number.
 
 ```console
 $ find roadmap -type f | sort > labs/01-linux/day-01/workspace/roadmap-files.txt
@@ -192,7 +194,7 @@ Answer in your own words:
 
 ## Extension orientation — Terminal, shell, and keys
 
-A **terminal** presents text input/output in a window; a **shell** interprets what you type there. macOS commonly starts zsh, while Ubuntu commonly uses Bash. Programs such as `cat` run through the shell; the terminal itself does not decide how a pipe or quote works. Prompts are configurable and may display the user, computer, and directory. A prompt's `$` is a convention, not a character to enter.
+A **terminal** presents text input/output in a window; a **shell** interprets what you type there. macOS commonly starts zsh (**Z shell**), while Ubuntu commonly uses Bash (**Bourne Again SHell**). Programs such as `cat` run through the shell; the terminal itself does not decide how a pipe or quote works. Prompts are configurable and may display the user, computer, and directory. A prompt's `$` is a convention, not a character to enter.
 
 Open Terminal on macOS through Spotlight or Applications → Utilities. On Ubuntu, use the application launcher; Ctrl-Alt-T commonly opens a terminal. Keyboard shortcuts depend on the terminal and its settings:
 
@@ -205,7 +207,7 @@ Open Terminal on macOS through Spotlight or Applications → Utilities. On Ubunt
 | Complete a path or command | Tab, when a completion is available | Tab, when a completion is available |
 | Send end-of-input | Ctrl-D on an empty input line | Ctrl-D on an empty input line |
 
-Ctrl-C sends SIGINT to the foreground job; a program may handle it, so cancellation is not a universal cleanup guarantee. Ctrl-D sends end-of-input rather than a termination signal; at an empty shell prompt it may exit the shell. `exit` also ends a shell session; a terminal tab may close depending on settings. Use these only after saving notes and finishing cleanup. Do not paste output, prompt markers, or pager instructions as shell commands. Read and paste one command at a time; a pasted newline can run it immediately.
+Ctrl-C sends SIGINT (**signal interrupt**) to the foreground job; a program may handle it, so cancellation is not a universal cleanup guarantee. Ctrl-D sends end-of-input rather than a termination signal; at an empty shell prompt it may exit the shell. `exit` also ends a shell session; a terminal tab may close depending on settings. Use these only after saving notes and finishing cleanup. Do not paste output, prompt markers, or pager instructions as shell commands. Read and paste one command at a time; a pasted newline can run it immediately.
 
 Paths use `/` as a separator. `/` names the filesystem root directory; **root the user** is a privileged account. Navigating to `/` does not change your user. Linux commonly stores home directories under `/home`; macOS uses `/Users`. The `~` prefix expands to your home directory when unquoted; `.` is the current directory and `..` its parent. A bare `cd` goes home. The exercises below return explicitly to this checkout before writing files.
 
@@ -216,12 +218,12 @@ Paths use `/` as a separator. `/` names the filesystem root directory; **root th
 Before the commands:
 
 - `cd /` visits the root directory; `pwd` prints the current location. `cd` without an argument and `cd ~` both go home. The final absolute `cd` returns to the checkout.
-- `whoami` prints your effective username; the example output uses `learner`.
+- `whoami` means **who am I**; it prints your effective username; the example output uses `learner`.
 - `mkdir -p` creates missing parent directories and permits existing directories. Multiple paths after it are separate arguments. `branch/leaf` creates nesting; `inbox archive` creates sibling directories.
 - `"release notes"` and `'team notes'` each keep a space inside a single argument. `escaped\ notes` protects just that space with a backslash. Unquoted `release notes` would instead be two arguments. Single quotes preserve literal text; double quotes still allow shell expansions such as `$variable`.
 - `cd labs/01-linux/day-01/extensions/paths` uses a relative path from the checkout. `ls -1` uses the digit one to list one entry per line, making output easy to compare.
 
-Options often use a short form (`-p`), separate short forms (`-l -a`), or combined flags (`-la`). GNU tools on Ubuntu also commonly provide long forms such as `--parents` for `mkdir -p`; macOS tools do not necessarily accept GNU long options. Command documentation determines which forms are valid. `--` often ends option parsing when a filename begins with `-`, but check the specific command. A missing argument can print usage; not every shell accepts the same `cd` arguments. These are syntax errors, not requests for administrator access.
+Options often use a short form (`-p`), separate short forms (`-l -a`), or combined flags (`-la`). GNU (**GNU’s Not Unix**, a recursive acronym) tools on Ubuntu also commonly provide long forms such as `--parents` for `mkdir -p`; macOS tools do not necessarily accept GNU long options. Command documentation determines which forms are valid. `--` often ends option parsing when a filename begins with `-`, but check the specific command. A missing argument can print usage; not every shell accepts the same `cd` arguments. These are syntax errors, not requests for administrator access.
 
 ```console
 $ cd /
@@ -341,10 +343,10 @@ $ cat
 This extension creates its own files in `extensions/moves`. Before the commands:
 
 - `cd`, `mkdir -p`, and `echo ... > ...` perform the same navigation, workspace creation, and text writing explained above.
-- `cp draft.txt backup.txt` creates a separate copy, leaving `draft.txt` intact. Existing destinations can be overwritten, so these destination names belong only to this lab. `cp -R` copies directory trees, but is unnecessary here.
-- `mv backup.txt reviewed.txt` renames the copy. `mv draft.txt destination/` moves the original into a directory. Source and destination arguments must be separated by a space; `.`, used later as a destination, means the current directory.
+- `cp` means **copy**; `cp draft.txt backup.txt` creates a separate copy, leaving `draft.txt` intact. Existing destinations can be overwritten, so these destination names belong only to this lab. `cp -R` uses `-R` (recursive) to copy directory trees, but is unnecessary here.
+- `mv` means **move**; `mv backup.txt reviewed.txt` renames the copy. `mv draft.txt destination/` moves the original into a directory. Source and destination arguments must be separated by a space; `.`, used later as a destination, means the current directory.
 - `ls -1 destination` lists the destination; `cat reviewed.txt destination/draft.txt` reads both files in order.
-- `mv destination/draft.txt .` returns that named file to this directory. `mv -i` and `cp -i` request confirmation before overwriting; our new first-run destinations do not need prompts. If repeating this extension, inspect any existing files before approving an overwrite.
+- `mv destination/draft.txt .` returns that named file to this directory. `mv -i` and `cp -i` use `-i` (interactive) to request confirmation before overwriting; our new first-run destinations do not need prompts. If repeating this extension, inspect any existing files before approving an overwrite.
 
 ```console
 $ cd /Users/citradigital/Desktop/learn/platform-engineer
@@ -398,10 +400,10 @@ Before the commands:
 
 - `cd` and `mkdir -p` create and enter the separate `extensions/streams` workspace.
 - `printf 'blue\nred\nblue\n'` writes three newline-terminated records to `events.txt` via `>`. Here `\n` is interpreted by `printf`'s format string.
-- `wc events.txt` reports lines, words, and bytes for this ASCII file. `wc -l < events.txt` counts newlines using file input, so it does not print a filename. `-w` selects words and `-c` selects bytes if needed; `-m` counts characters, which can differ from bytes for non-ASCII text.
-- `uniq events.txt` collapses only **adjacent** equal lines; the repeated `blue` lines here are separated. `sort events.txt` arranges the lines so equal ones are adjacent. Sorting can depend on locale; these simple names have the shown common order.
+- `wc events.txt` reports lines, words, and bytes for this ASCII (**American Standard Code for Information Interchange**) file. `wc -l < events.txt` counts newlines using file input, so it does not print a filename. `-w` (words) selects word counts and `-c` (byte count) selects bytes if needed; `-m` (characters) counts characters, which can differ from bytes for non-ASCII text.
+- `uniq` means **unique**; `uniq events.txt` collapses only **adjacent** equal lines; the repeated `blue` lines here are separated. `sort events.txt` arranges the lines so equal ones are adjacent. Sorting can depend on locale; these simple names have the shown common order.
 - `sort events.txt | uniq` streams the sorted lines to `uniq`; adding `| wc -l` counts the distinct records. `> unique.txt` saves that same distinct list, and `cat` inspects it.
-- `man uniq` opens the locally installed manual, commonly through a pager. Read its NAME, SYNOPSIS, and description of adjacent matches, then press **q** to return. `[argument]` in a synopsis commonly means optional; the brackets are not literal command syntax. Manuals can differ across BSD/macOS and GNU/Linux. `man sort` or `man wc` can clarify their supported options later.
+- `man` means **manual**; `man uniq` opens the locally installed manual, commonly through a pager. Read its NAME, SYNOPSIS, and description of adjacent matches, then press **q** to return. `[argument]` in a synopsis commonly means optional; the brackets are not literal command syntax. Manuals can differ across BSD (**Berkeley Software Distribution**)/macOS and GNU/Linux. `man sort` or `man wc` can clarify their supported options later.
 
 ```console
 $ cd /Users/citradigital/Desktop/learn/platform-engineer
@@ -453,7 +455,7 @@ UNIQ(1)
 
 1. **Check:** Why does plain `uniq` still output three lines? **Answer:** Its matching records are not adjacent until sorted.
 2. **Check:** What does the second pipe carry? **Answer:** `uniq`'s stdout becomes `wc`'s stdin, so `wc` counts distinct lines without a temporary file.
-3. **Check:** Why are bytes and characters not always equal? **Answer:** Some characters use multiple bytes in encodings such as UTF-8; the sample uses only ASCII.
+3. **Check:** Why are bytes and characters not always equal? **Answer:** Some characters use multiple bytes in encodings such as UTF-8 (**Unicode Transformation Format, 8-bit**); the sample uses only ASCII.
 
 ## Extension 8 — Hidden entries and case
 
@@ -522,10 +524,10 @@ Do this after Extensions 4–8 and after saving observations outside the extensi
 Before the commands:
 
 - The absolute `cd` and `pwd` establish the checkout. `find .../extensions -print` lists the workspace tree, including hidden entries. Inspect it before deleting anything. If it contains your own additional files, preserve them and adapt the cleanup; do not broaden the deletion command.
-- `rmdir .../moves` initially fails **as expected** because the directory has contents. `rmdir` removes only empty directories.
-- `rm` removes each explicitly named extension file; it does not send them to Trash. No wildcard, force flag, or recursive deletion is used here. If a listed file is already absent, a missing-file error means that target needs no further deletion; inspect the remaining tree.
-- The subsequent `rmdir` calls remove empty children before parents. Directory names with spaces remain quoted. `rmdir -p` can also try to remove empty ancestor directories; this exercise uses explicit paths to bound the cleanup.
-- `rm -r` means recursively remove a directory and contents; `-f` suppresses many prompts/errors. They are conceptual only here because broad recursive removal can destroy unrelated work. `rm -i` offers per-file confirmation, but still deletes the approved file rather than moving it to Trash.
+- `rmdir` means **remove directory**; `rmdir .../moves` initially fails **as expected** because the directory has contents. `rmdir` removes only empty directories.
+- `rm` means **remove**; it removes each explicitly named extension file; it does not send them to Trash. No wildcard, force flag, or recursive deletion is used here. If a listed file is already absent, a missing-file error means that target needs no further deletion; inspect the remaining tree.
+- The subsequent `rmdir` calls remove empty children before parents. Directory names with spaces remain quoted. `rmdir -p` uses `-p` (parents) to also try to remove empty ancestor directories; this exercise uses explicit paths to bound the cleanup.
+- `rm -r` uses `-r` (recursive) to remove a directory and contents; `-f` (force) suppresses many prompts/errors. They are conceptual only here because broad recursive removal can destroy unrelated work. `rm -i` uses `-i` (interactive) for per-file confirmation, but still deletes the approved file rather than moving it to Trash.
 - Finally `ls -1 labs/01-linux/day-01` confirms that this day’s `README.md` and the original `workspace` remain. `exit` or Ctrl-D can close your shell afterward; they are optional keyboard/session actions, not part of this cleanup transcript.
 
 ```console
@@ -587,15 +589,15 @@ workspace
 
 This is a written task; **do not execute administrator, package-installation, or sensitive-file commands on this Mac**. Ordinary lab files belong to you and require no elevation.
 
-The root account usually has UID 0 and can change system-wide resources. Older workflows use `su` to switch identity and open a privileged shell, or log in directly as root. Every subsequent command in that shell can then affect the system. Ubuntu commonly disables direct root-password login and grants selected users controlled elevation through `sudo`; policy, rather than the command name alone, decides what is allowed.
+The root account usually has user ID (**UID**, user identifier) 0 and can change system-wide resources. Older workflows use `su` to run a shell under another user identity (defaulting to root) and open a privileged shell, or log in directly as root. Every subsequent command in that shell can then affect the system. Ubuntu commonly disables direct root-password login and grants selected users controlled elevation through `sudo`; policy, rather than the command name alone, decides what is allowed.
 
-`sudo` executes a specified command under an authorized identity, normally root. It commonly authenticates using your own password, may remember that authentication briefly, and records activity according to system policy. Password entry may show no characters. A shell obtained via `sudo su` or `sudo -i` keeps later commands privileged. A `#` prompt often indicates privilege but is configurable; it is not reliable proof of identity. Elevation increases authority, not the correctness of a command or trustworthiness of downloaded code.
+`sudo` executes a specified command under an authorized identity, normally root. It commonly authenticates using your own password, may remember that authentication briefly, and records activity according to system policy. Password entry may show no characters. A shell obtained via `sudo su` or `sudo -i` keeps later commands privileged; sudo’s `-i` means login (also `--login`), starting the target user’s login shell. A `#` prompt often indicates privilege but is configurable; it is not reliable proof of identity. Elevation increases authority, not the correctness of a command or trustworthiness of downloaded code.
 
 On Linux, `/etc/shadow` commonly stores password hashes and account-aging data, with access restricted to privileged users/services. A password hash is not plaintext, but it is still sensitive. A normal-user read may be denied; that restriction is expected and is not something to bypass for practice. macOS manages accounts differently, so a Linux path/example is not a macOS diagnostic procedure. Avoid collecting or sharing protected account data.
 
-Ubuntu's `apt` manages packages from configured repositories. In the conceptual expression `sudo apt install tree`, `sudo` requests elevation, `apt` is the package tool, `install` is its action, and `tree` is a package name. `apt-get` is a related package interface; `apt` does not ship as macOS's system package manager. Installing packages changes the machine and may require downloads. Repository additions, PPAs, and downloaded installation scripts introduce trust decisions; confirm the publisher/source before granting permissions. Ubuntu also supports Snap packages, whose confinement depends on packaging and options. None needs installation for this lab.
+Ubuntu's `apt` is part of APT (**Advanced Package Tool**) and manages packages from configured repositories. In the conceptual expression `sudo apt install tree`, `sudo` requests elevation, `apt` is the package tool, `install` is its action, and `tree` is a package name. `apt-get` is a related package interface; `apt` does not ship as macOS's system package manager. Installing packages changes the machine and may require downloads. Repository additions, PPAs (**Personal Package Archives**), and downloaded installation scripts introduce trust decisions; confirm the publisher/source before granting permissions. Ubuntu also supports Snap packages, whose confinement depends on packaging and options. None needs installation for this lab.
 
-`tree` displays nested paths visually; its `-a` option commonly includes hidden entries. It may not be installed on this laptop. Our existing `find ... -print` practice covers tree inspection without adding software. System settings often live under `/etc`, while individual dotfiles can hold user preferences; readable configuration does not automatically require privileged access. Editing system settings may.
+`tree` displays nested paths visually; its `-a` (all) option commonly includes hidden entries. It may not be installed on this laptop. Our existing `find ... -print` practice covers tree inspection without adding software. System settings often live under `/etc`, while individual dotfiles can hold user preferences; readable configuration does not automatically require privileged access. Editing system settings may.
 
 **Written task:** Explain to a teammate why none of the extension exercises requires `sudo`, how package installation differs from making a local directory, and why you would not copy an unfamiliar privileged command into your terminal.
 

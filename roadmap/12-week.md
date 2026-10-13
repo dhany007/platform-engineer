@@ -2,7 +2,7 @@
 
 This course is designed for a Go backend engineer moving toward platform engineering. Each study day explains why the topic matters, what you will learn, gives you a hands-on task, and points to written reading material. There are no video assignments.
 
-**Pace:** 5 study days per week, about 60–90 minutes per day (6–8 hours weekly). Treat each “day” as one study session; take rest days whenever needed. Use one Go HTTP API as the running example. Keep the work local until you intentionally choose a cloud provider.
+**Pace:** 5 study days per week, about 60–90 minutes per day (6–8 hours weekly). Treat each “day” as one study session; take rest days whenever needed. Use one Go Hypertext Transfer Protocol (HTTP) application programming interface (API) as the running example. Keep the work local until you intentionally choose a cloud provider. See the [glossary](../notes/glossary.md) for command names and abbreviations used throughout the course.
 
 ## Course map
 
@@ -10,7 +10,7 @@ This course is designed for a Go backend engineer moving toward platform enginee
 |---|---|---|
 | 1 | Linux and networking | Explain how a request reaches a process and inspect it from the command line. |
 | 2 | Containers | Run the Go API and PostgreSQL reproducibly with Docker Compose. |
-| 3 | Git and CI | Automatically test and build the service on every pull request. |
+| 3 | Git and continuous integration (CI) | Automatically test and build the service on every pull request. |
 | 4 | Production-ready Go service | Add configuration, health checks, graceful shutdown, and structured logs. |
 | 5 | Kubernetes foundations | Deploy and reach the API in a local Kubernetes cluster. |
 | 6 | Kubernetes operations | Configure, observe, roll out, roll back, and troubleshoot the workload. |
@@ -19,7 +19,7 @@ This course is designed for a Go backend engineer moving toward platform enginee
 | 9 | OpenTelemetry | Emit traces and metrics from the Go service. |
 | 10 | Prometheus and dashboards | Query service health and build a useful dashboard. |
 | 11 | Platform as a product | Create a simple golden path for starting and deploying a service. |
-| 12 | Reliability and capstone | Practice SLO thinking and present the completed platform workflow. |
+| 12 | Reliability and capstone | Practice service level objective (SLO) thinking and present the completed platform workflow. |
 
 ## Running project
 
@@ -39,26 +39,26 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 
 ### Day 2 — Users, permissions, and processes
 
-- **Learn:** How users, file permissions, process IDs, and signals affect a running service.
-- **Practice:** Inspect your identity and lab-file permissions; start a harmless `sleep` process, inspect its PID, send SIGTERM, restart it, and clean up. Graceful cleanup requires application signal handling.
+- **Learn:** How users, file permissions, process identifiers (PIDs), and signals affect a running service.
+- **Practice:** Inspect your identity and lab-file permissions; start a harmless `sleep` process, inspect its PID, send SIGTERM (the termination signal), restart it, and clean up. Graceful cleanup requires application signal handling.
 - **Read:** [Ubuntu: Welcome to the terminal](https://ubuntu.com/server/docs/tutorial/welcome-to-the-terminal/), [Linux signal manual](https://man7.org/linux/man-pages/man7/signal.7.html).
 
-### Day 3 — Ports and TCP connections
+### Day 3 — Ports and Transmission Control Protocol (TCP) connections
 
-- **Learn:** How clients connect to a process through an IP address and port; distinguish connection failures from application errors.
-- **Practice:** Run a loopback Python `http.server` in Terminal A; inspect its listener with `lsof` and request it with `curl` in Terminal B. Compare HTTP 404 with a connection failure after stopping the server.
+- **Learn:** How clients connect to a process through an Internet Protocol (IP) address and port; distinguish connection failures from application errors.
+- **Practice:** Run a loopback Python `http.server` in Terminal A; inspect its listener with `lsof` (list open files) and request it with `curl` (a URL transfer tool) in Terminal B. Compare HTTP 404 with a connection failure after stopping the server.
 - **Read:** [Cloudflare: What is TCP/IP?](https://www.cloudflare.com/learning/ddos/glossary/tcp-ip/), [curl manual](https://curl.se/docs/manpage.html).
 
-### Day 4 — DNS, HTTP, and TLS
+### Day 4 — Domain Name System (DNS), HTTP, and Transport Layer Security (TLS)
 
 - **Learn:** How DNS resolves a name, how HTTP requests and responses are structured, and what TLS protects.
-- **Practice:** Inspect public A and AAAA DNS records with `dig`, examine GET and HEAD requests to a public HTTPS endpoint with `curl`, and explain the DNS, connection, TLS, and HTTP steps.
+- **Practice:** Inspect public A (IPv4 address) and AAAA (IPv6 address) DNS records with `dig` (a DNS lookup tool), examine GET and HEAD HTTP methods at a public HTTPS (HTTP over TLS) endpoint with `curl`, and explain the DNS, connection, TLS, and HTTP steps.
 - **Read:** [Cloudflare: What is DNS?](https://www.cloudflare.com/learning/dns/what-is-dns/), [MDN: Overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview), [Cloudflare: TLS](https://www.cloudflare.com/learning/ssl/transport-layer-security-tls/).
 
 ### Day 5 — Logs and first-response troubleshooting
 
 - **Learn:** A repeatable first-response sequence: check process, listener, recent logs, and dependencies.
-- **Practice:** Capture a local Python HTTP server's logs, diagnose an intentionally incorrect client port with `curl`, `lsof`, `ps`, and `tail`, restore the request, and write an incident note.
+- **Practice:** Capture a local Python HTTP server's logs, diagnose an intentionally incorrect client port with `curl`, `lsof`, `ps` (process status), and `tail` (the end of a file), restore the request, and write an incident note.
 - **Read:** [The Twelve-Factor App: Logs](https://12factor.net/logs), [curl manual](https://curl.se/docs/manpage.html).
 
 **Milestone:** Explain the path from a DNS name to an HTTP handler and show how you would investigate a connection failure.
@@ -122,7 +122,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 ### Day 13 — Test and build the service
 
 - **Learn:** CI should run the same checks contributors use locally and fail clearly when a check fails.
-- **Practice:** Run formatting verification, `go test ./...`, and `go build ./...` in the workflow.
+- **Practice:** Run formatting verification, `go test ./...`, and `go build ./...` in the workflow. In Go, `./...` means packages in the current directory and its descendants.
 - **Read:** [GitHub Actions: Understanding workflows](https://docs.github.com/en/actions/about-github-actions/understanding-github-actions).
 
 ### Day 14 — Cache dependencies and retain artifacts
@@ -148,7 +148,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 ### Day 16 — Configuration and validation
 
 - **Learn:** Keep environment-specific configuration outside the binary and fail early when required settings are missing or invalid.
-- **Practice:** Configure the listen address and database URL through environment variables; validate them at startup.
+- **Practice:** Configure the listen address and database Uniform Resource Locator (URL) through environment variables; validate them at startup.
 - **Read:** [The Twelve-Factor App: Config](https://12factor.net/config), [Go: Managing dependencies](https://go.dev/doc/modules/managing-dependencies).
 
 ### Day 17 — Health and readiness
@@ -165,7 +165,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 
 ### Day 19 — Structured logs
 
-- **Learn:** Structured logs make fields such as level, request ID, and error searchable and consistent.
+- **Learn:** Structured logs make fields such as level, request identifier (ID), and error searchable and consistent.
 - **Practice:** Emit structured startup, request, and error logs using Go's standard `log/slog` package.
 - **Read:** [Go `log/slog` package](https://pkg.go.dev/log/slog).
 
@@ -173,7 +173,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 
 - **Learn:** Reduce the impact of mistakes with minimal container privileges, dependency updates, and careful secret handling.
 - **Practice:** Check the image user, remove any hard-coded credentials, and add a dependency review step to the project checklist.
-- **Read:** [Go: Managing dependencies](https://go.dev/doc/modules/managing-dependencies), [OWASP Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html).
+- **Read:** [Go: Managing dependencies](https://go.dev/doc/modules/managing-dependencies), [OWASP Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html) (OWASP is the Open Worldwide Application Security Project).
 
 **Milestone:** The API validates its configuration, exposes meaningful health checks, logs structured events, and shuts down gracefully.
 
@@ -186,7 +186,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 ### Day 21 — Cluster and desired state
 
 - **Learn:** A Kubernetes cluster has a control plane and worker nodes; users declare objects and controllers work toward the declared state.
-- **Practice:** Start a local cluster with kind or Minikube, inspect its nodes, and review the current context.
+- **Practice:** Start a local cluster with kind (Kubernetes in Docker) or Minikube, inspect its nodes, and review the current context.
 - **Read:** [Kubernetes: Cluster architecture](https://kubernetes.io/docs/concepts/architecture/), [Kubernetes tutorials](https://kubernetes.io/docs/tutorials/).
 
 ### Day 22 — Pods
@@ -210,7 +210,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 ### Day 25 — Namespaces, labels, and selectors
 
 - **Learn:** Namespaces group objects; labels and selectors connect objects and support queries.
-- **Practice:** Put the API in its own namespace, label its resources, and query them with `kubectl` selectors.
+- **Practice:** Put the API in its own namespace, label its resources, and query them with `kubectl` (the Kubernetes command-line control tool) selectors.
 - **Read:** [Kubernetes: Namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/), [Kubernetes: Labels and selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/).
 
 **Milestone:** Deploy multiple API replicas in a local cluster and access them through a Kubernetes Service.
@@ -233,7 +233,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 - **Practice:** Add probes to the API Deployment and observe the result of an intentionally failing readiness check.
 - **Read:** [Kubernetes: Configure liveness, readiness, and startup probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/).
 
-### Day 28 — CPU and memory requests and limits
+### Day 28 — Central processing unit (CPU) and memory requests and limits
 
 - **Learn:** Requests influence scheduling; limits constrain resource use. Poor settings can cause scheduling failures or throttling.
 - **Practice:** Set reasonable CPU and memory requests and limits for the local API; inspect the Pod specification.
@@ -262,8 +262,8 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 ### Day 31 — Configuration, providers, and initialization
 
 - **Learn:** Terraform configuration describes resources; providers connect Terraform to APIs; initialization installs providers and modules.
-- **Practice:** Create a small local Terraform project and run `terraform init` and `terraform validate`.
-- **Read:** [Terraform CLI tutorials](https://developer.hashicorp.com/terraform/tutorials/cli).
+- **Practice:** Create a small local Terraform project and run `terraform init` (initialize the working directory) and `terraform validate` (check configuration syntax and consistency).
+- **Read:** [Terraform command-line interface (CLI) tutorials](https://developer.hashicorp.com/terraform/tutorials/cli).
 
 ### Day 32 — Plan before apply
 
@@ -325,7 +325,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 
 - **Learn:** A repeatable deployment has documented prerequisites, a predictable command, and a verification step.
 - **Practice:** Add `make deploy-local` and `make destroy-local` commands with clear output and safety checks.
-- **Read:** [GNU Make manual](https://www.gnu.org/software/make/manual/make.html).
+- **Read:** [GNU (GNU’s Not Unix) Make manual](https://www.gnu.org/software/make/manual/make.html).
 
 **Milestone:** Build and deploy a named local overlay using documented commands, with no manual edits to live resources.
 
@@ -333,7 +333,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 
 ## Week 9 — OpenTelemetry
 
-**Context:** Logs describe events, metrics summarize behavior, and traces connect work across request boundaries. OpenTelemetry provides APIs and SDKs for generating and exporting telemetry.
+**Context:** Logs describe events, metrics summarize behavior, and traces connect work across request boundaries. OpenTelemetry provides APIs and software development kits (SDKs) for generating and exporting telemetry.
 
 ### Day 41 — Signals and instrumentation model
 
@@ -344,7 +344,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 ### Day 42 — Trace HTTP requests
 
 - **Learn:** Spans represent units of work; trace context lets related work share a trace identity.
-- **Practice:** Instrument the Go HTTP server and emit traces to a local/stdout exporter.
+- **Practice:** Instrument the Go HTTP server and emit traces to a local/standard output (stdout) exporter.
 - **Read:** [OpenTelemetry Go: Getting started](https://opentelemetry.io/docs/languages/go/getting-started/).
 
 ### Day 43 — Add useful metrics
@@ -381,7 +381,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 
 ### Day 47 — Query service metrics
 
-- **Learn:** PromQL selects and aggregates time series; rate functions help interpret counters over time.
+- **Learn:** Prometheus Query Language (PromQL) selects and aggregates time series; rate functions help interpret counters over time.
 - **Practice:** Query request rate, error ratio, and latency distribution for the API.
 - **Read:** [Prometheus: Querying basics](https://prometheus.io/docs/prometheus/latest/querying/basics/).
 
@@ -415,7 +415,7 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 
 - **Learn:** A platform capability should solve a real recurring friction point and have clear users and outcomes.
 - **Practice:** Write the steps a developer currently takes to start, test, and deploy the sample Go service; mark avoidable manual steps.
-- **Read:** [CNCF Platforms White Paper](https://tag-app-delivery.cncf.io/whitepapers/platforms/).
+- **Read:** [Cloud Native Computing Foundation (CNCF) Platforms White Paper](https://tag-app-delivery.cncf.io/whitepapers/platforms/).
 
 ### Day 52 — Define a golden path
 
@@ -447,11 +447,11 @@ Use a small Go HTTP API with a health endpoint and, optionally, PostgreSQL. Exte
 
 ## Week 12 — Reliability and capstone
 
-**Context:** Platform engineering and SRE overlap in automation and observability. This final week adds reliability thinking: define what users need, choose signals, respond to failures, and demonstrate the complete developer path.
+**Context:** Platform engineering and site reliability engineering (SRE) overlap in automation and observability. This final week adds reliability thinking: define what users need, choose signals, respond to failures, and demonstrate the complete developer path.
 
 ### Day 56 — SLIs, SLOs, and error budgets
 
-- **Learn:** An SLI measures a user-relevant aspect of service behavior; an SLO sets a target over a time window; an error budget describes allowed unreliability.
+- **Learn:** A service level indicator (SLI) measures a user-relevant aspect of service behavior; an SLO sets a target over a time window; an error budget describes allowed unreliability.
 - **Practice:** Define a request-availability SLI and a draft SLO for the sample API. State what user experience the metric represents.
 - **Read:** [Google SRE: Service Level Objectives](https://sre.google/sre-book/service-level-objectives/), [The SRE Workbook](https://sre.google/workbook/).
 

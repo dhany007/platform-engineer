@@ -1,14 +1,16 @@
 # Week 1 — Linux and Networking
 
-This week builds a troubleshooting model from files and processes up to ports, DNS, HTTP, and logs. Work through one day at a time. Each lab explains its commands before asking you to run them. Keep your command output and short answers in a personal notes file; the exercises should be performed by you in a terminal.
+This week builds a troubleshooting model from files and processes up to ports, the Domain Name System (DNS), Hypertext Transfer Protocol (HTTP), and logs. Work through one day at a time. Each lab explains its commands before asking you to run them. Keep your command output and short answers in a personal notes file; the exercises should be performed by you in a terminal. The [glossary](../../notes/glossary.md) collects command names and abbreviations for quick reference.
 
 In command examples, a `$` at the start of a line marks a shell prompt. Do not type that leading `$`; type the command after it and press Enter once per line. Other `$` characters inside a command, such as `$!` or `$lab_sleep_pid`, are shell syntax and must be typed. Keep using the same terminal unless an exercise explicitly names Terminal A or Terminal B.
 
-Each exercise includes an **Expected result** subsection, and each question set includes an **Answer key**. Expected results repeat the exercise commands as reading transcripts: `$` marks a command, and the lines immediately below it show representative output. Consecutive command lines mean the earlier command normally prints nothing. Bracketed notes mark omitted output. These examples are for reading, not for pasting as commands, and do not record completed exercises. Sample PIDs, UIDs, timestamps, permissions, DNS addresses, headers, and diagnostics vary; `learner` is a generic sample user. Terminal A/B labels show where each transcript belongs. A written exercise has a labeled sample response instead of a terminal transcript. Reading an example does not mark an exercise complete.
+Command explanations name short options at first use and show their long forms when the installed tool supports them. Option letters are case-sensitive: for example, curl's `-i` and `-I` do different things. Some macOS commands do not support GNU (GNU’s Not Unix) long-style options, so use the spelling shown in the exercise.
+
+Each exercise includes an **Expected result** subsection, and each question set includes an **Answer key**. Expected results repeat the exercise commands as reading transcripts: `$` marks a command, and the lines immediately below it show representative output. Consecutive command lines mean the earlier command normally prints nothing. Bracketed notes mark omitted output. These examples are for reading, not for pasting as commands, and do not record completed exercises. Sample process IDs (PIDs), user IDs (UIDs), timestamps, permissions, DNS addresses, headers, and diagnostics vary; `learner` is a generic sample user. Terminal A/B labels show where each transcript belongs. A written exercise has a labeled sample response instead of a terminal transcript. Reading an example does not mark an exercise complete.
 
 ## Prerequisites
 
-Days 2–5 work on this macOS laptop with a shell and `python3`, `curl`, `dig`, and `lsof`. Day 4 requires internet access. The exercises use a harmless `sleep` process and a loopback Python HTTP server; a Go API is not required for Week 1. Days 3 and 5 use two terminal tabs, with Ctrl-C in the server tab for cleanup.
+Days 2–5 work on this macOS laptop with a shell and `python3`, `curl` (URL transfer), `dig` (DNS lookup), and `lsof` (list open files). Day 4 requires internet access. The exercises use a harmless `sleep` process and a loopback Python HTTP server; a Go application programming interface (API) is not required for Week 1. Days 3 and 5 use two terminal tabs, with Ctrl-C in the server tab for cleanup.
 
 ## Lab locations
 
@@ -21,12 +23,12 @@ The exercise commands intentionally use paths relative to the project root. Foll
 - [x] Day 1 — Shell, paths, files, pipes, and redirection; core and extensions complete: [lab](day-01/README.md)
 - [ ] Day 2 — Users, permissions, and processes; core complete, extensions pending: [lab](day-02/README.md)
 - [ ] Day 3 — Ports and TCP connections; core complete, extensions pending: [lab](day-03/README.md)
-- [ ] Day 4 — DNS, HTTP, and TLS; core and extensions pending: [lab](day-04/README.md)
+- [x] Day 4 — DNS, HTTP, and TLS; core and extensions complete: [lab](day-04/README.md)
 - [ ] Day 5 — Logs and first-response troubleshooting; core and extensions pending: [lab](day-05/README.md)
 
 Day 1 now covers the entire Ubuntu beginner tutorial over multiple self-paced sessions. Its original Core Day 1 exercises and answers were completed earlier; all extensions and their checks are now practiced and reviewed, so the expanded day is complete. All Day 1 material stays in its lab file.
 
-Days 2–5 also include two extensions each. The completed core work for Days 2 and 3 remains checked inside those day guides. Their expanded-day checkboxes will be marked after the new extensions and answers are reviewed; Days 4 and 5 have not been started.
+Days 2–5 also include two extensions each. The completed core work for Days 2 and 3 remains checked inside those day guides. Their expanded-day checkboxes will be marked after the new extensions and answers are reviewed. Day 4's core and extensions are complete; Day 5 has not been started.
 
 Mark a day complete after its exercises and answers have been reviewed.
 

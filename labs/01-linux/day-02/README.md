@@ -4,6 +4,10 @@
 
 In the command blocks below, the `$` at the start of each line is a prompt marker, not part of the command. Type the text after it and press Enter once per line. Other `$` characters inside a command, such as `$!` and `$lab_sleep_pid`, must be typed. Use the same terminal throughout this day.
 
+Flag meanings in parentheses are memory aids, not invented long-option aliases. BSD (**Berkeley Software Distribution**)/macOS tools may not support GNU (**GNU’s Not Unix**, a recursive acronym) long options; use only the options documented for the installed command.
+
+Command names, abbreviations, and option meanings are also collected in the [glossary](../../../notes/glossary.md).
+
 ## Progress
 
 - [x] Exercise 1 — Inspect your identity and a file's permissions.
@@ -18,7 +22,7 @@ In the command blocks below, the `$` at the start of each line is a prompt marke
 
 ## Why this matters
 
-A service runs as a user, needs permission to read its files, and has a process ID (PID). Inspecting those facts helps explain permission errors and failed startups. This lab uses your own files and a harmless `sleep` process on macOS; no Go API is needed.
+A service runs as a user, needs permission to read its files, and has a process identifier (**PID**, process ID). Inspecting those facts helps explain permission errors and failed startups. This lab uses your own files and a harmless `sleep` process on macOS; no Go application programming interface (**API**) is needed.
 
 ## Learning goals
 
@@ -28,7 +32,7 @@ A service runs as a user, needs permission to read its files, and has a process 
 
 ## Reading
 
-Read [Ubuntu: Welcome to the terminal](https://ubuntu.com/server/docs/tutorial/welcome-to-the-terminal/) for terminal and permission basics. In the [Linux signal manual](https://man7.org/linux/man-pages/man7/signal.7.html), read signal dispositions and the entries for SIGINT and SIGTERM. The signal concepts apply here; some Linux commands and output differ from macOS.
+Read [Ubuntu: Welcome to the terminal](https://ubuntu.com/server/docs/tutorial/welcome-to-the-terminal/) for terminal and permission basics. In the [Linux signal manual](https://man7.org/linux/man-pages/man7/signal.7.html), read signal dispositions and the entries for SIGINT (**signal interrupt**) and SIGTERM (**signal terminate**). The signal concepts apply here; some Linux commands and output differ from macOS.
 
 ## Core Day 2 — Already completed
 
@@ -38,13 +42,13 @@ Exercises 1–3 and their checked criteria remain complete. The new extensions b
 
 Before running the commands:
 
-- `cd` enters this checkout using its absolute path. Use the same terminal for all today's exercises.
-- `id` prints your user ID, primary group, and group memberships.
-- `mkdir -p` creates the workspace, including missing parents, and tolerates an existing directory.
-- `printf` writes sample text; `\n` adds a newline. `>` creates or overwrites only the named lab file.
-- `chmod 600` gives the owner read (4) plus write (2) permission and gives the group and others no permissions (0). These three digits represent owner, group, and others.
-- `ls -l` shows file details. The leading `-` means a regular file; `rw-------` means owner read/write only. macOS may append an extra marker for metadata.
-- `cat` reads the file. Your user owns it, so reading should succeed.
+- `cd` (**change directory**) enters this checkout using its absolute path. Use the same terminal for all today's exercises.
+- `id` (**identity**) prints your user identifier (**UID**, user ID), primary group identifier (**GID**, group ID), and group memberships.
+- `mkdir` (**make directory**) with `-p` uses `-p` (parents) to create the workspace, including missing parents, and tolerates an existing directory.
+- `printf` (**formatted print**) writes sample text; `\n` adds a newline. `>` creates or overwrites only the named lab file.
+- `chmod` means **change mode** (permission bits); `chmod 600` gives the owner read (4) plus write (2) permission and gives the group and others no permissions (0). These three digits represent owner, group, and others.
+- `ls` (**list**) with `-l` uses `-l` (long listing) to show file details. The leading `-` means a regular file; `rw-------` means owner read/write only. macOS may append an extra marker for metadata.
+- `cat` (**concatenate**) joins file contents in sequence; here it reads the single file. Your user owns it, so reading should succeed.
 - `chmod 644` keeps owner read/write and gives group and others read permission. File execute permission (`x`, value 1) is unnecessary for this text file. Directory execute permission instead controls traversal.
 
 ```console
@@ -86,7 +90,7 @@ $ ls -l labs/01-linux/day-02/workspace/sample.conf
 - `sleep 600` waits for 600 seconds and then exits. `&` runs it in the background so your shell stays available.
 - `lab_sleep_pid=$!` stores the PID of the most recent background process in a shell variable. No spaces go around `=`.
 - `printf` prints that PID using `%s` as a text placeholder; `"$lab_sleep_pid"` expands the variable as one argument.
-- `ps -p` selects that PID. `-o pid,ppid,user,stat,command` selects columns for PID, parent PID, user, state, and command. State details vary by OS; a waiting process commonly shows `S`.
+- `ps` means **process status**; `ps -p` uses `-p` (select PID) to select that process. `-o pid,ppid,user,stat,command` uses `-o` (output format) to select columns for PID, parent process ID (**PPID**), user, process state (**STAT**, status), and command. State details vary by operating system (**OS**); a waiting process commonly shows `S`.
 
 ```console
 $ sleep 600 &
@@ -117,7 +121,7 @@ $ ps -p "$lab_sleep_pid" -o pid,ppid,user,stat,command
 First inspect the saved PID again and confirm it still belongs to your `sleep 600`. If it has exited, repeat Exercise 2 before sending a signal. Never substitute a PID belonging to another process.
 
 - `ps` uses the same selection and columns as above to confirm the target.
-- `kill -TERM` sends SIGTERM to that PID. SIGTERM requests termination; its default action is to terminate. Graceful cleanup requires the application to handle the signal and finish work. Sending SIGTERM alone does not prove that cleanup happened.
+- `kill` sends a signal to a process; `-TERM` selects the termination signal. `kill -TERM` sends SIGTERM to that PID. SIGTERM requests termination; its default action is to terminate. Graceful cleanup requires the application to handle the signal and finish work. Sending SIGTERM alone does not prove that cleanup happened.
 - `wait` waits for this shell's background child and collects its exit status. A termination message or nonzero status is expected after the signal.
 - The next `ps` should show only a header or report no matching process.
 - `sleep`, `&`, and `$!` start a replacement and save its new PID. The final signal and `wait` clean up that replacement.
@@ -183,19 +187,19 @@ $ wait "$lab_sleep_pid"
 
 ## Extension 4 — Default permissions with umask
 
-A file's initial permissions depend on the creating program and its process mask. Changing the mask affects later creations, while `chmod` changes an existing file. This explains why an application's new logs can have a different mode from a file you edited yesterday.
+`umask` is the **file-creation permission mask**; it controls which permission bits are cleared when files or directories are created. A file's initial permissions depend on the creating program and its process mask. Changing the mask affects later creations, while `chmod` changes an existing file. This explains why an application's new logs can have a different mode from a file you edited yesterday.
 
-**Written reading:** [Apple: umask(2)](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/umask.2.html) and [zsh: umask builtin](https://zsh.sourceforge.io/Doc/Release/Shell-Builtin-Commands.html#index-umask). Ordinary shell redirection requests mode `666` for a new regular file; a mask clears selected bits. Mask `077` normally yields `600`, and `022` yields `644`. This is bit masking, not general decimal subtraction. A mask never adds execute permission. ACLs and filesystem policies can affect observed access; record any extra permission markers.
+**Written reading:** [Apple: umask(2)](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/umask.2.html) and [zsh: umask builtin](https://zsh.sourceforge.io/Doc/Release/Shell-Builtin-Commands.html#index-umask). Ordinary shell redirection requests mode `666` for a new regular file; a mask clears selected bits. Mask `077` normally yields `600`, and `022` yields `644`. This is bit masking, not general decimal subtraction. A mask never adds execute permission. Access control lists (**ACLs**) and filesystem policies can affect observed access; record any extra permission markers.
 
 Before running the commands from the project root:
 
 - `cd` enters the checkout. `mkdir -p` creates the extension parent and tolerates its existence.
 - `umask` without arguments prints the current shell's mask. Compare its first and last output; the extension does not change it.
-- `lab_mask_dir=$(mktemp -d .../run.XXXXXX)` stores a newly created directory path. `$(...)` captures command output, `-d` requests a directory, and `XXXXXX` supplies a unique suffix template. Each run therefore creates genuinely new files instead of overwriting files with existing modes. If `mktemp` reports an error, stop here and resolve it before continuing; do not run file commands with an empty directory variable.
-- Each `zsh -f -c '...'` invokes a separate child shell (a subshell environment). `-f` skips ordinary startup configuration and `-c` executes the quoted script. `mask-lab` supplies its `$0` label; the following directory argument becomes `$1` inside that child. Single quotes keep the parent from expanding `$1`.
+- `mktemp` means **make temporary**; it creates a file or directory with a unique name. `lab_mask_dir=$(mktemp -d .../run.XXXXXX)` stores a newly created directory path. `$(...)` captures command output, `-d` (directory) requests a directory, and `XXXXXX` supplies a unique suffix template. Each run therefore creates genuinely new files instead of overwriting files with existing modes. If `mktemp` reports an error, stop here and resolve it before continuing; do not run file commands with an empty directory variable.
+- `zsh` means **Z shell**. Each `zsh -f -c '...'` invokes a separate child shell (a subshell environment). `-f` means skip ordinary startup files; `-c` means command string and executes the quoted script. `mask-lab` supplies its `$0` label; the following directory argument becomes `$1` inside that child. Single quotes keep the parent from expanding `$1`.
 - Inside each child, `umask 077` or `umask 022` sets only that child's mask. A semicolon separates its two commands. `printf` writes text ending with `\n`; `>` creates the named new file inside the quoted `$1` directory. Both children exit afterward.
 - `ls -l` shows file modes. `chmod 640` changes the already-created private file to owner read/write, group read, and no other access. The other file remains `644`.
-- `rm` removes only the two explicitly named lab files; `rmdir` removes their now-empty unique directory. Neither operates on the core workspace.
+- `rm` (**remove**) removes only the two explicitly named lab files; `rmdir` (**remove directory**) removes their now-empty unique directory. Neither operates on the core workspace.
 
 ```console
 $ cd /Users/citradigital/Desktop/learn/platform-engineer
@@ -255,10 +259,10 @@ Use an interactive terminal, not a script runner. Before the commands:
 
 - `cd` enters the checkout and `mkdir -p` establishes the isolated `extensions/jobs` location. No file is required for this process exercise.
 - `zsh -f` opens a nested interactive zsh with ordinary startup configuration skipped and a new job table. Keep using this nested shell until `exit`; all sample job numbers below refer to it.
-- `sleep 600` waits up to ten minutes in the foreground. While it runs, press **Ctrl-Z** once. This normally sends SIGTSTP and stops the job; it does not kill it. The displayed `^Z` is a keypress representation, not a command.
-- `jobs -l` lists this shell's jobs with their PIDs. Confirm the stopped entry is your `sleep 600` before proceeding.
-- `bg %1` resumes job 1 in the background; `%1` names a shell job, not PID 1. If the job number differs, replace `%1` in both `bg` and `fg` with the observed number.
-- `fg %1` brings that job into the foreground. Press **Ctrl-C** once while it is running to interrupt this owned `sleep` with SIGINT. Then `jobs -l` should have no remaining lab job.
+- `sleep 600` waits up to ten minutes in the foreground. While it runs, press **Ctrl-Z** once. This normally sends SIGTSTP (**signal terminal stop**) and stops the job; it does not kill it. The displayed `^Z` is a keypress representation, not a command.
+- `jobs -l` uses `-l` (long listing) to list this shell's jobs with their PIDs. Confirm the stopped entry is your `sleep 600` before proceeding.
+- `bg` means **background**; `bg %1` resumes job 1 in the background; `%1` names a shell job, not PID 1. If the job number differs, replace `%1` in both `bg` and `fg` with the observed number.
+- `fg` means **foreground**; `fg %1` brings that job into the foreground. Press **Ctrl-C** once while it is running to interrupt this owned `sleep` with SIGINT. Then `jobs -l` should have no remaining lab job.
 - `exit` leaves the nested shell and returns to the original shell. Do this only after stopping the lab job.
 
 ```console

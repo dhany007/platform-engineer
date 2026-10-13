@@ -4,6 +4,8 @@
 
 In the command blocks below, `$` is a prompt marker, not part of the command. Type the text after `$` and press Enter once per line, using Terminal A or B as instructed.
 
+Command names, abbreviations, and option meanings are also collected in the [glossary](../../../notes/glossary.md).
+
 ## Progress
 
 - [ ] Exercise 1 — Start a local server and capture its logs.
@@ -18,11 +20,11 @@ In the command blocks below, `$` is a prompt marker, not part of the command. Ty
 
 ## Why this matters
 
-A useful first response collects evidence before changing anything: what failed, whether a process exists, whether it listens where the client expects, and what the logs show. Today's failure is an incorrect client port. The server needs no database or Go API, so you can isolate the symptom locally.
+A useful first response collects evidence before changing anything: what failed, whether a process exists, whether it listens where the client expects, and what the logs show. Today's failure is an incorrect client port. HTTP means Hypertext Transfer Protocol. The server needs no database or Go API (Application Programming Interface), so you can isolate the symptom locally.
 
 ## Learning goals
 
-1. Capture standard output and standard error in a lab log.
+1. Capture standard output (stdout) and standard error (stderr) in a lab log.
 2. Correlate client results, process information, listeners, and log lines.
 3. Restore a request by correcting its port and summarize evidence clearly.
 
@@ -34,11 +36,11 @@ Read [The Twelve-Factor App: Logs](https://12factor.net/logs), which treats logs
 
 Open **Terminal A** and **Terminal B**. In **Terminal A**, before starting the server:
 
-- `cd` enters the project root; `mkdir -p` creates the lab workspace and missing parents.
-- `printf` writes a greeting with a newline (`\n`); `>` creates or overwrites `index.html`.
-- `python3 -u` disables buffering for Python's standard output and error, helping log lines appear promptly. `-m http.server` runs the built-in server module on port `8765`.
-- `--bind 127.0.0.1` limits access to IPv4 loopback. `--directory` limits served files to this workspace.
-- `>` redirects standard output to `server.log`, overwriting an earlier session. `2>&1` then sends standard error (descriptor 2) to the same destination as standard output (descriptor 1). The order matters.
+- `cd` (change directory) enters the project root; in `mkdir` (make directory) with `-p`, `-p` means create missing parent directories and accept an existing directory, so the command creates the lab workspace and missing parents.
+- `printf` (print formatted) writes a greeting with a newline (`\n`); `>` creates or overwrites `index.html`.
+- `python3` runs the Python 3 interpreter. In `python3 -u`, `-u` means unbuffered standard output and error, helping log lines appear promptly. `-m` means run a module by name; `-m http.server` runs the built-in server module on port `8765`.
+- `--bind 127.0.0.1` limits access to IPv4 (Internet Protocol version 4) loopback. `--directory` limits served files to this workspace.
+- `>` redirects standard output to `server.log`, overwriting an earlier session. `2>&1` then sends standard error (file descriptor 2: a numbered handle for an open stream) to the same destination as standard output (descriptor 1). The order matters.
 
 ```console
 $ cd /Users/citradigital/Desktop/learn/platform-engineer
@@ -52,8 +54,8 @@ Leave Terminal A occupied by the foreground server. Its output now goes to the l
 In **Terminal B**:
 
 - `cd` enters the same checkout independently; terminal tabs have separate working directories.
-- `tail -n 10` prints the last ten log lines to check startup.
-- `curl -i` includes response headers. `--connect-timeout 2` and `--max-time 5` bound connection establishment and the full operation in seconds.
+- `tail` reads the end (tail) of a file. `tail -n 10` prints the last ten log lines to check startup; `-n` specifies the number of lines.
+- `curl` is a URL (Uniform Resource Locator) transfer tool; its name has several documented wordplays. `curl -i` uses `-i`, corresponding to the supported alias `--include`, to include response headers before the body. The current [curl header-output reference](https://curl.se/docs/manpage.html#-i) names it `--show-headers`; older versions may only support the long name `--include`. `--connect-timeout 2` and `--max-time 5` bound connection establishment and the full operation in seconds.
 - The second `tail` shows the successful request's log line.
 
 ```console
@@ -102,7 +104,7 @@ Serving HTTP on 127.0.0.1 port 8765 (http://127.0.0.1:8765/) ...
 
 Use **Terminal B**. First check the deliberate wrong port:
 
-- `lsof -nP` lists sockets with numeric IP addresses and ports. `-iTCP:8764` selects port 8764; `-sTCP:LISTEN` selects listeners.
+- `lsof` means list open files; network sockets are among the open files it can show. `lsof -nP` combines `-n` (numeric addresses without hostname lookup) and `-P` (numeric ports without service-name conversion), listing sockets with numeric IP (Internet Protocol) addresses and ports. `-i` selects Internet connections; `-iTCP:8764` selects TCP (Transmission Control Protocol) connections on port 8764. `-s` selects protocol states when used with a protocol; `-sTCP:LISTEN` selects TCP listeners. In the output, `FD` means file descriptor.
 - No output, with a possible nonzero exit status, means no visible listener matches. If a listener appears, choose a different unused port and replace `8764` in the failing curl command. Do not interact with that process.
 
 ```console
@@ -111,8 +113,8 @@ $ lsof -nP -iTCP:8764 -sTCP:LISTEN
 
 Now collect evidence:
 
-- `curl -v` shows connection diagnostics, with the same timeout bounds as before. Port 8764 is intentionally different from the server port.
-- `lsof` checks the actual listener on 8765 using the same options. Record its PID.
+- `curl -v` uses `-v`, short for `--verbose`, to show connection diagnostics, with the same timeout bounds as before. See the [curl verbose reference](https://curl.se/docs/manpage.html#-v). Port 8764 is intentionally different from the server port.
+- `lsof` checks the actual listener on 8765 using the same options. Record its PID (process ID).
 - `tail -n 10` reads recent logs. A connection that never reaches this server cannot produce an HTTP request log here.
 
 ```console
@@ -123,7 +125,7 @@ $ tail -n 10 labs/01-linux/day-05/workspace/server.log
 
 The curl connection failure and nonzero status are **expected observations**. There should be no HTTP response status for that attempt, while the real listener remains available.
 
-To inspect its process, use the PID from the listener output. Before the command: `ps -p` selects a PID, and `-o pid,ppid,user,stat,command` shows identity, parent, user, state, and command. Replace `12345` below with the observed PID; it is only a placeholder.
+To inspect its process, use the PID from the listener output. Before the command: `ps` (process status) uses `-p` to filter by process ID (PID), and `-o` selects the output format. `-o pid,ppid,user,stat,command` shows the PID, PPID (parent process ID), user, STAT (process status), and command. Replace `12345` below with the observed PID; it is only a placeholder.
 
 ```console
 $ ps -p 12345 -o pid,ppid,user,stat,command
@@ -167,7 +169,7 @@ $ tail -n 10 labs/01-linux/day-05/workspace/server.log
 
 Expect HTTP 200 and the greeting. In personal notes, write five short points: symptom, client address/port, process/listener evidence, log evidence, and the correction with its verification. State that this static server has no database dependency to investigate; future services may have dependencies even when their listener is healthy.
 
-For cleanup, press **Ctrl-C** in **Terminal A**. It sends SIGINT to the foreground server even though output is redirected. Wait for the shell prompt. Then in **Terminal B**, `lsof` with the same filters confirms that the lab listener is gone:
+For cleanup, press **Ctrl-C** in **Terminal A**. It sends SIGINT (signal interrupt) to the foreground server even though output is redirected. Wait for the shell prompt. Then in **Terminal B**, `lsof` with the same filters confirms that the lab listener is gone:
 
 ```console
 $ lsof -nP -iTCP:8765 -sTCP:LISTEN
@@ -320,11 +322,11 @@ $ lsof -nP -iTCP:8775 -sTCP:LISTEN
 
 Use either terminal after the extension server is stopped:
 
-- `mkdir -p` creates an extension-only directory. `sh -c` runs the single quoted command string in a child shell.
+- `mkdir -p` creates an extension-only directory. `sh` means shell; `sh -c` uses `-c` to execute the following command string in a child shell; here that string is single quoted.
 - Each child runs two `printf` commands: `stdout line` goes to descriptor 1, and `stderr line` goes to descriptor 2 because of `>&2`. The semicolon inside the quoted string separates the two child commands; enter the whole displayed line once.
 - The first outer `>` redirects only stdout into `stdout-only.log`. Stderr remains visible in the terminal.
 - The second outer `> ... 2>&1` first sends stdout to `combined.log`, then sends stderr to the same destination. Redirections are processed left to right; reversing them would send stderr to the original stdout destination.
-- `cat` prints each saved file. `>` overwrites these two extension files on a rerun, and `\n` in each `printf` format ends the line.
+- `cat` (concatenate) prints each saved file. `>` overwrites these two extension files on a rerun, and `\n` in each `printf` format ends the line.
 - The leading `$` is a prompt marker, not text to type. The quoted text contains no shell variable placeholders.
 
 ```console
