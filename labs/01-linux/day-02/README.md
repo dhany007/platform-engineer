@@ -15,7 +15,7 @@ Command names, abbreviations, and option meanings are also collected in the [glo
 - [x] Exercise 3 — Request termination and restart the process.
 - [x] Check your understanding — Answer the three questions below.
 - [x] Core Day 2 complete — Exercises 1–3 and their answers reviewed.
-- [ ] Extension 4 — Default permissions with umask.
+- [x] Extension 4 — Default permissions with umask.
 - [ ] Extension 5 — Suspend, resume, and stop an owned job.
 - [ ] Extension checks — Practice and review both new question sets.
 - [ ] Expanded Day 2 complete — Core and extensions reviewed.
@@ -191,6 +191,15 @@ $ wait "$lab_sleep_pid"
 
 **Written reading:** [Apple: umask(2)](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/umask.2.html) and [zsh: umask builtin](https://zsh.sourceforge.io/Doc/Release/Shell-Builtin-Commands.html#index-umask). Ordinary shell redirection requests mode `666` for a new regular file; a mask clears selected bits. Mask `077` normally yields `600`, and `022` yields `644`. This is bit masking, not general decimal subtraction. A mask never adds execute permission. Access control lists (**ACLs**) and filesystem policies can affect observed access; record any extra permission markers.
 
+Think of `666` as the permissions requested for each **new** regular file: owner, group, and others each start with read/write. The mask removes permissions from that request:
+
+| Creating shell's mask | Bits cleared | New file mode in this lab |
+| --- | --- | --- |
+| `077` | Group and others lose read/write. | `600` (`rw-------`) |
+| `022` | Group and others lose write, but keep read. | `644` (`rw-r--r--`) |
+
+Each `zsh -f -c '...'` runs in a separate **child shell**, so its `umask` change affects only files that child creates; your original terminal retains its own mask. `mktemp -d` gives each run a fresh directory, and the two file names do not exist yet. This matters because `>` on an **existing** file replaces its contents but normally keeps its existing permission mode; that would hide the effect of the creation mask. After creation, changing a mask does not alter either file. Use `chmod` to change an existing file's mode.
+
 Before running the commands from the project root:
 
 - `cd` enters the checkout. `mkdir -p` creates the extension parent and tolerates its existence.
@@ -243,9 +252,9 @@ $ rmdir "$lab_mask_dir"
 
 ### Checks and answer key
 
-1. **Check:** Why did the new files start at different modes? **Answer:** Each creating child shell used a different mask to clear bits from the requested creation mode.
-2. **Check:** Does a later `umask 077` change `public.txt` to `600`? **Answer:** No. Existing-file mode changes require an operation such as `chmod`; changing creation defaults is separate.
-3. **Check:** Why use separate children and fresh filenames? **Answer:** Children isolate the mask change from your interactive shell, while fresh files let you observe creation rather than truncation of an existing file.
+1. [x] **Check:** Why did the new files start at different modes? **Answer:** Each creating child shell used a different mask to clear bits from the requested creation mode.
+2. [x] **Check:** Does a later `umask 077` change `public.txt` to `600`? **Answer:** No. Existing-file mode changes require an operation such as `chmod`; changing creation defaults is separate.
+3. [x] **Check:** Why use separate children and fresh filenames? **Answer:** Children isolate the mask change from your interactive shell, while fresh files let you observe creation rather than truncation of an existing file.
 
 **Cleanup and rerun:** The last two commands remove only this run's files/directory. Keep the empty extension parent if desired. If interrupted, inspect the saved directory path and finish those named cleanup commands in the same shell before repeating. A rerun gets a fresh suffix; do not reuse a path from another session or remove a directory you did not create.
 
@@ -313,7 +322,7 @@ $ exit
 ## Expanded Day 2 completion criteria
 
 - [x] Core Exercises 1–3 and their original criteria remain reviewed.
-- [ ] Extension 4 practiced: creation masks compared, parent mask preserved, and named files cleaned up.
+- [x] Extension 4 practiced: creation masks compared, parent mask preserved, and named files cleaned up.
 - [ ] Extension 5 practiced: owned job suspended, resumed, foregrounded, and stopped.
 - [ ] Both extension question sets reviewed, including creation versus chmod and job number versus PID.
 - [ ] Expanded Day 2 complete — All extension practice and cleanup reviewed.
